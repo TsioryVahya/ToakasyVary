@@ -15,14 +15,14 @@ class AuthController extends Controller
 
     public function login(Request $request) {
         $credentials = $request->validate([
-            'username' => 'required',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
+        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('/home');
+            return redirect()->intended('/home')->with('success', 'Connexion réussie !');
         }
-        return back()->withErrors(['username' => 'Identifiants invalides.']);
+        return back()->withErrors(['email' => 'Identifiants invalides.'])->withInput();
     }
 
     public function showRegister() {
@@ -40,7 +40,7 @@ class AuthController extends Controller
             'id_employe' => 1, // à adapter selon ta logique
         ]);
         Auth::login($user);
-        return redirect('/home');
+        return redirect('/home')->with('success', 'Inscription réussie !');
     }
 
     public function logout(Request $request) {

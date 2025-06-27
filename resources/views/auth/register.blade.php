@@ -11,6 +11,19 @@
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold text-primary-green text-center mb-6">Inscription</h2>
 
+            @if(session('success'))
+                <div class="mb-4 p-2 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="mb-4 p-2 bg-red-100 text-red-800 rounded">
+                    <ul class="list-disc pl-5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
@@ -61,7 +74,7 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="w-full bg-primary-green text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-200">
+                    <button type="submit" class="w-full bg-white text-primary-green border border-primary-green font-bold py-2 px-4 rounded hover:bg-primary-green hover:text-white transition duration-200">
                         S'inscrire
                     </button>
                 </div>
