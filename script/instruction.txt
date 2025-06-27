@@ -1,0 +1,11 @@
+Modifier le fichier php.ini
+
+Ouvrez le fichier D:\php\php.ini avec un éditeur de texte (Notepad++, VSCode, etc.)
+Recherchez la ligne qui contient :
+;extension=fileinfo
+
+
+
+npm install
+
+npm run dev
