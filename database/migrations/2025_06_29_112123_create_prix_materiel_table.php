@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained('matiere_premieres') // ou rien si la table suit le nom de la colonne sans le "id_"
                 ->onDelete('set null');
             $table->decimal('prix', 10, 2)->nullable();
-            $table->timestamps()
+            $table->timestamps();
         });
     }
 
