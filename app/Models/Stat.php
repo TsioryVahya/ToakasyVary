@@ -9,7 +9,6 @@ class Stat extends Model
     public $timestamps = false;
     public $incrementing = false;
     protected $primaryKey = null;
-    protected $table = 'stats';
 
     protected static function boot()
     {
