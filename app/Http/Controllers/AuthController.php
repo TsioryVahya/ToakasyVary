@@ -9,27 +9,31 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLogin() {
+    public function showLogin()
+    {
         return view('auth.login');
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard')->with('success', 'Connexion réussie !');
+            return redirect()->intended('home')->with('success', 'Connexion réussie !');
         }
         return back()->withErrors(['email' => 'Identifiants invalides.'])->withInput();
     }
 
-    public function showRegister() {
+    public function showRegister()
+    {
         return view('auth.register');
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $data = $request->validate([
             'name' => 'required|unique:users,name|min:3',
             'email' => 'required|email|unique:users,email',
@@ -48,14 +52,16 @@ class AuthController extends Controller
         return redirect('/home')->with('success', 'Inscription réussie !');
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login');
     }
 
-    public function home() {
+    public function home()
+    {
         return view('home');
     }
 }
