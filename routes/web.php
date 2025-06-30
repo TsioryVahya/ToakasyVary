@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 
 // Rediriger la racine vers la page de connexion
@@ -21,7 +22,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/statForm', [StatController::class, 'statForm']);
 Route::post('/stat_vente', [StatController::class, 'stat_vente'])->name('stat_vente');
-
+Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique'])->name('historique_vente');
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
