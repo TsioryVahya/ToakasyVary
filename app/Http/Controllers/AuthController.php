@@ -20,7 +20,7 @@ class AuthController extends Controller
         ]);
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('/home')->with('success', 'Connexion réussie !');
+            return redirect()->intended('/dashboard')->with('success', 'Connexion réussie !');
         }
         return back()->withErrors(['email' => 'Identifiants invalides.'])->withInput();
     }
@@ -31,13 +31,18 @@ class AuthController extends Controller
 
     public function register(Request $request) {
         $data = $request->validate([
-            'username' => 'required|unique:users,username|min:3',
+            'name' => 'required|unique:users,name|min:3',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:4|confirmed',
+            'id_employe' => 'nullable|exists:employes,id',
         ]);
         $user = User::create([
-            'username' => $data['username'],
-            'pswd' => Hash::make($data['password']),
-            'id_employe' => 1, // à adapter selon ta logique
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']), // Utilisez 'password' au lieu de 'pswd'
+                'id_employe' => $data['id_employe'] ?? null, // Utilisez la valeur du formulaire ou null
+            ])
         ]);
         Auth::login($user);
         return redirect('/home')->with('success', 'Inscription réussie !');
