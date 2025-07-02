@@ -31,12 +31,14 @@ class AuthController extends Controller
 
     public function register(Request $request) {
         $data = $request->validate([
-            'username' => 'required|unique:users,username|min:3',
+            'name' => 'required|unique:users,name|min:3',
             'password' => 'required|min:4|confirmed',
+            'email' => 'required|email'
         ]);
         $user = User::create([
-            'username' => $data['username'],
-            'pswd' => Hash::make($data['password']),
+            'name' => $data['name'],
+            'password' => Hash::make($data['password']),
+            'email' => $data['email'],
             'id_employe' => 1, // à adapter selon ta logique
         ]);
         Auth::login($user);

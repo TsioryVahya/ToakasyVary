@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommandeController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -19,6 +20,9 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
+Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
+Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
