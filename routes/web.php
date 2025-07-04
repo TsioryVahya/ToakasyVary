@@ -7,7 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
-
+use App\Http\Controllers\CalendarController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -29,6 +29,9 @@ Route::post('/stat_vente', [StatController::class, 'stat_vente'])->name('stat_ve
 Route::get('/production/histogram', [ProductionController::class, 'showHistogram'])->name('production.histogram');
 Route::post('/production/filter', [ProductionController::class, 'filterHistogram'])->name('production.filter');
 Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique'])->name('historique_vente');
+
+Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
+
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
