@@ -15,3 +15,5 @@ VALUES
     ('Marie Durand', 'Technicien', 'marie.durand@example.com', '0987654321', 1, 1, NOW(), NOW()),
     ('Pierre Martin', 'Commercial', 'pierre.martin@example.com', '0345678901', 1, 2, NOW(), NOW()),
     ('Sophie Lefèvre', 'Recruteur', 'sophie.lefevre@example.com', '0765432109', 1, 3, NOW(), NOW());
+
+    
