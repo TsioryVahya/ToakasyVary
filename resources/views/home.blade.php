@@ -227,6 +227,14 @@
                         </div>
                     </div>
                 </div>
+
+        <main class="flex-grow container mx-auto p-6">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-primary-green mb-4">Bienvenue, {{ auth()->user()->name }} !</h2>
+                <a href="/statForm"><p class="text-gray-700">stat vente</p></a>
+                <a href="{{ route('historique_vente') }}"><p class="text-gray-700">Historique vente</p></a>
+                <a href="{{ route('production.calendar') }}"><p class="text-gray-700">Calendrier</p></a>
+                <p class="text-gray-700">Ceci est la page d'accueil de ToakaVary. Vous êtes maintenant connecté.</p>
             </div>
         </main>
     </div>
