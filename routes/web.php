@@ -35,6 +35,7 @@ Route::get('/suivistock', function () {
 })->name('suivistock')->middleware('auth');
 
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
+Route::get('/production/calendar/data', [CalendarController::class, 'getVieillissementData'])->name('production.calendar.data');
 
 /*
 // Routes d'authentification de Breeze

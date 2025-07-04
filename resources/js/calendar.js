@@ -20,6 +20,19 @@ const joursFeries = {
     }
 };
 
+// Ajouter après les jours fériés
+let vieillissementEvents = [];
+
+// Fonction pour charger les données de vieillissement
+async function loadVieillissementData() {
+    try {
+        const response = await fetch('/production/calendar/data');
+        vieillissementEvents = await response.json();
+    } catch (error) {
+        console.error('Erreur lors du chargement des données de vieillissement:', error);
+    }
+}
+
 // Fonction pour calculer la période de notification (3 mois avant pendant 1 semaine)
 function isNotificationPeriod(eventDate, currentDate) {
     const threeMonthsBefore = new Date(eventDate);
@@ -32,7 +45,6 @@ function isNotificationPeriod(eventDate, currentDate) {
     return currentDate >= notificationStart && currentDate <= notificationEnd;
 }
 
-// Fonction pour obtenir les notifications actuelles
 function getCurrentNotifications() {
     const today = new Date();
     const notifications = [];
@@ -115,28 +127,88 @@ function generateCalendar(month, year) {
 
     for (let day = 1; day <= daysInMonth; day++) {
         const dayCell = document.createElement('div');
-        dayCell.className = 'p-3 min-h-[80px] border border-gray-200 rounded cursor-pointer hover:bg-gray-50';
+        dayCell.className = 'p-3 min-h-[80px] border border-gray-200 rounded cursor-pointer hover:bg-gray-50 relative';
+        
+        const currentDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
         const dateString = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const jourFerie = joursFeries[year] && joursFeries[year][dateString];
 
+         const vieillissementEventsForDate = vieillissementEvents.filter(event => event.date === currentDateString);
+
+        let cellContent = `<div class="font-semibold text-gray-800">${day}</div>`;
+        let cellClass = dayCell.className;
+
         if (jourFerie) {
-            dayCell.className += ` ${jourFerie.couleur} text-white`;
-            dayCell.innerHTML = `
+             cellClass += ` ${jourFerie.couleur} text-white`;
+            cellContent = `
                 <div class="font-bold">${day}</div>
                 <div class="text-xs mt-1">${jourFerie.nom}</div>
             `;
             dayCell.title = jourFerie.nom;
-        } else {
-            dayCell.innerHTML = `<div class="font-semibold">${day}</div>`;
+        } else if (vieillissementEventsForDate.length > 0) {
+            // Gérer les événements de vieillissement
+            cellContent = createVieillissementCell(day, vieillissementEventsForDate);
+            
+            // Appliquer un fond dégradé si plusieurs lots
+            if (vieillissementEventsForDate.length > 1) {
+                cellClass += ' bg-gradient-to-br from-blue-400 via-orange-400 to-purple-400';
+            } else {
+                cellClass += ` ${vieillissementEventsForDate[0].couleur}`;
+            }
+            
+            // Créer le tooltip
+            const tooltipText = vieillissementEventsForDate.map(event => event.nom).join('\n');
+            dayCell.title = tooltipText;
         }
 
         // Mettre en évidence le jour actuel
         if (day === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear()) {
-            dayCell.className += ' ring-2 ring-blue-400';
+            cellClass += ' ring-2 ring-blue-400';
         }
 
+        dayCell.className = cellClass;
+        dayCell.innerHTML = cellContent;
         calendarGrid.appendChild(dayCell);
+    }
+}
+
+function createVieillissementCell(day, events) {
+    let content = `<div class="font-bold text-white">${day}</div>`;
+    
+    // Créer des indicateurs empilés pour chaque lot
+    content += '<div class="flex flex-wrap gap-1 mt-1">';
+    
+    events.forEach((event, index) => {
+        const icon = getEventIcon(event.type);
+        const shortName = event.nom.split(' - ')[1] || `Lot ${event.lot_id}`;
+        
+        content += `
+            <div class="text-xs bg-black bg-opacity-20 rounded px-1 py-0.5 text-white">
+                ${icon}
+            </div>
+        `;
+        
+        // Limiter l'affichage à 3 lots maximum
+        if (index === 2 && events.length > 3) {
+            content += `<div class="text-xs bg-black bg-opacity-20 rounded px-1 py-0.5 text-white">+${events.length - 3}</div>`;
+            return;
+        }
+    });
+    
+    content += '</div>';
+    
+    return content;
+}
+
+function getEventIcon(type) {
+    switch (type) {
+        case 'fermentation':
+            return '🍺';
+        case 'vieillissement':
+            return '🍷';
+        default:
+            return '📅';
     }
 }
 
@@ -172,17 +244,16 @@ function nextMonth() {
     generateCalendar(currentMonth, currentYear);
 }
 
-// Exposer les fonctions globalement
 window.previousMonth = previousMonth;
 window.nextMonth = nextMonth;
 window.generateCalendar = generateCalendar;
 window.closeNotification = closeNotification;
 window.temporaryHideNotification = temporaryHideNotification;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadVieillissementData();
     generateCalendar(currentMonth, currentYear);
     displayNotifications();
     
-    // Vérifier et afficher les notifications toutes les 30 minutes
-    setInterval(displayNotifications, 1800000); // 30 minutes = 1800000 ms
+    setInterval(displayNotifications, 1800000); 
 });

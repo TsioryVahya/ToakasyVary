@@ -55,3 +55,20 @@ GROUP BY
     ligne_commandes.prix_unitaire,
     commandes.date_commande,
     commandes.date_livraison;
+
+
+CREATE VIEW vieillissement AS
+SELECT 
+    lp.id AS lot_id,
+    lp.id_gamme,
+    lp.id_bouteille,
+    lp.date_debut,
+    lp.date_mise_en_bouteille,
+    lp.date_commercialisation,
+    lp.nombre_bouteilles,
+    g.nom AS nom_gamme,
+    g.description AS description_gamme,
+    g.fermentation_jours,
+    g.vieillissement_jours
+FROM Lot_Production lp
+JOIN Gamme g ON lp.id_gamme = g.id;
