@@ -50,52 +50,7 @@
                         <!-- Les jours seront générés par JavaScript -->
                     </div>
 
-                    <!-- Légende des jours fériés -->
-                    <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Jours Fériés à Madagascar</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-red-500 rounded"></div>
-                                <span>Nouvel An (1er janvier)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-purple-500 rounded"></div>
-                                <span>Insurrection de 1947 (29 mars)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-green-500 rounded"></div>
-                                <span>Pâques (variable)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-yellow-500 rounded"></div>
-                                <span>Fête du Travail (1er mai)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-blue-500 rounded"></div>
-                                <span>Ascension (variable)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-indigo-500 rounded"></div>
-                                <span>Lundi de Pentecôte (variable)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-orange-500 rounded"></div>
-                                <span>Fête de l'Indépendance (26 juin)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-pink-500 rounded"></div>
-                                <span>Assomption (15 août)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-teal-500 rounded"></div>
-                                <span>Toussaint (1er novembre)</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-red-600 rounded"></div>
-                                <span>Noël (25 décembre)</span>
-                            </div>
-                        </div>
-                    </div>
+                
                 </div>
             </div>
         </main>
