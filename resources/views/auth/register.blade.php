@@ -39,8 +39,9 @@
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-primary-green">Adresse e-mail</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-green focus:ring focus:ring-primary-green focus:ring-opacity-50">
-                    @error('email')
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-green focus:ring focus:ring-primary-green focus:ring-opacity-50"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                @error('email')
                         <span class="text-red-600 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
