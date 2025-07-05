@@ -31,7 +31,7 @@ Route::post('/production/filter', [ProductionController::class, 'filterHistogram
 Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique'])->name('historique_vente');
 
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
-Route::get('/production/calendar/data', [CalendarController::class, 'getVieillissementData'])->name('production.calendar.data');
+Route::get('/production/calendar/data', [CalendarController::class, 'getCalendarData'])->name('production.calendar.data');
 
 /*
 // Routes d'authentification de Breeze

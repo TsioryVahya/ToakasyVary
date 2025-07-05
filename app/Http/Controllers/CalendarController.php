@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vieillissement;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class CalendarController extends Controller
 {
@@ -11,57 +12,98 @@ class CalendarController extends Controller
     {
         return view('production.calendar');
     }
-    
-    public function getVieillissementData()
+
+    public function getCalendarData()
     {
         try {
-            $vieillissements = Vieillissement::all();
+            $lots = Vieillissement::all();
             $events = [];
-            
-            foreach ($vieillissements as $v) {
-                // Calculer les dates importantes
-                $dateDebut = new \DateTime($v->date_debut);
-                $fermentationFin = clone $dateDebut;
-                $fermentationFin->modify('+' . $v->fermentation_jours . ' days');
-                
-                $vieillissementDebut = clone $fermentationFin;
-                $vieillissementDebut->modify('+1 day');
-                
-                $vieillissementFin = clone $vieillissementDebut;
-                $vieillissementFin->modify('+' . $v->vieillissement_jours . ' days');
-                
-                // Créer tous les jours de fermentation
-                $currentDate = clone $dateDebut;
-                while ($currentDate <= $fermentationFin) {
-                    $events[] = [
-                        'type' => 'fermentation',
-                        'date' => $currentDate->format('Y-m-d'),
-                        'nom' => "Fermentation - {$v->nom_gamme}",
-                        'lot_id' => $v->lot_id,
-                        'couleur' => 'bg-blue-500',
-                        'day_type' => $currentDate == $dateDebut ? 'debut' : ($currentDate == $fermentationFin ? 'fin' : 'milieu')
-                    ];
-                    $currentDate->modify('+1 day');
+
+            foreach ($lots as $lot) {
+                $dateDebut = Carbon::parse($lot->date_debut);
+
+                // 1. Début de production
+                $events[] = $this->createEvent(
+                    $dateDebut->format('Y-m-d'),
+                    'production_start',
+                    'bg-gray-500',
+                    'Début production',
+                    $lot
+                );
+
+                // 2. Période de fermentation
+                if ($lot->fermentation_jours > 0) {
+                    // Début fermentation (même jour que début production)
+                    $events[] = $this->createEvent(
+                        $dateDebut->format('Y-m-d'),
+                        'fermentation_start',
+                        'bg-blue-300',
+                        'Début fermentation',
+                        $lot
+                    );
+
+                    // Fin fermentation = Mise en bouteille
+                    $finFermentation = $dateDebut->copy()->addDays($lot->fermentation_jours);
+                    $events[] = $this->createEvent(
+                        $finFermentation->format('Y-m-d'),
+                        'fermentation_end',
+                        'bg-blue-500',
+                        'Fin fermentation/Mise en bouteille',
+                        $lot
+                    );
                 }
-                
-                 $currentDate = clone $vieillissementDebut;
-                while ($currentDate <= $vieillissementFin) {
-                    $events[] = [
-                        'type' => 'vieillissement',
-                        'date' => $currentDate->format('Y-m-d'),
-                        'nom' => "Vieillissement - {$v->nom_gamme}",
-                        'lot_id' => $v->lot_id,
-                        'couleur' => 'bg-orange-500',
-                        'day_type' => $currentDate == $vieillissementDebut ? 'debut' : ($currentDate == $vieillissementFin ? 'fin' : 'milieu')
-                    ];
-                    $currentDate->modify('+1 day');
+
+                // 3. Période de vieillissement
+                if ($lot->vieillissement_jours > 0) {
+                    // Début vieillissement (jour après fin fermentation)
+                    $debutVieillissement = $dateDebut->copy()->addDays($lot->fermentation_jours + 1);
+                    $events[] = $this->createEvent(
+                        $debutVieillissement->format('Y-m-d'),
+                        'aging_start',
+                        'bg-orange-300',
+                        'Début vieillissement',
+                        $lot
+                    );
+
+                    // Fin vieillissement = Commercialisation
+                    $finVieillissement = $debutVieillissement->copy()->addDays($lot->vieillissement_jours);
+                    $events[] = $this->createEvent(
+                        $finVieillissement->format('Y-m-d'),
+                        'aging_end',
+                        'bg-green-500',
+                        'Fin vieillissement/Commercialisation',
+                        $lot
+                    );
                 }
             }
-            
-            return response()->json($events);
-            
+
+            return response()
+                ->json($events)
+                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET');
+
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Erreur lors de la génération du calendrier',
+                'details' => $e->getMessage()
+            ], 500);
         }
+    }
+
+    private function createEvent($date, $type, $color, $label, $lot)
+    {
+        $event = [
+            'date' => $date,
+            'type' => $type,
+            'couleur' => $color,
+            'nom' => "$label - Lot #{$lot->lot_id}",
+            'lot_id' => $lot->lot_id,
+            'gamme' => $lot->nom_gamme,
+            'full_date' => Carbon::parse($date)->isoFormat('dddd D MMMM YYYY'),
+            'is_start_event' => in_array($type, ['production_start', 'fermentation_start', 'aging_start']),
+            'is_end_event' => in_array($type, ['fermentation_end', 'aging_end'])
+        ];
+
+        return $event;
     }
 }
