@@ -14,7 +14,7 @@ return new class extends Migration
     {
         DB::statement("
         
-CREATE VIEW vue_details_commandes AS
+CREATE OR REPLACE VIEW vue_details_commandes AS
 SELECT
     c.id,
     c.date_commande,

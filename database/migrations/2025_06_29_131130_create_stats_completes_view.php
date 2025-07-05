@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE VIEW stats_completes AS
+        DB::statement("CREATE OR REPLACE VIEW stats_completes AS
             SELECT
                 gammes.nom AS nom,
                 commandes.total AS montant,
