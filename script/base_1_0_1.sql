@@ -221,14 +221,15 @@ CREATE TABLE Commande (
 );
 
 --historique commande
-CREATE TABLE historique_commande (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  id_commande INT,
-  id_statut_commande INT,
+CREATE TABLE historique_commandes (
+  id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id_commande BIGINT(20) UNSIGNED,
+  id_statut_commande BIGINT(20) UNSIGNED,
   date_hist DATE,
   FOREIGN KEY (id_commande) REFERENCES commandes(id),
   FOREIGN KEY (id_statut_commande) REFERENCES statut_commandes(id)
 );
+
 
 CREATE TABLE paiement_commande(
   id_paiement_commande INT PRIMARY KEY,

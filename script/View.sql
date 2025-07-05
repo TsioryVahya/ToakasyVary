@@ -86,13 +86,13 @@ SELECT
     g.nom AS nom_gamme,
     tb.nom AS nom_bouteille,
     tb.capacite AS capacite_bouteille,
-    
+    g.id as idGamme,
     lc.quantite_bouteilles,
 
     p.montant AS montant_paye,
     p.date_paiement,
     stc.id as idhistorique,
-    stc.id_status_commande as idstatus,
+    stc.id_statut_commande as idstatus,
 
     pr.prix_unitaire as prixUnitaire, 
     (lc.quantite_bouteilles * pr.prix_unitaire) AS montant_ligne

@@ -22,8 +22,8 @@ VALUES
 
 -- Clients
 INSERT INTO Clients (id, nom) VALUES
-  (1, 'Andry Rabe'),
-  (2, 'Miora Ranaivo');
+  (3, 'rabe'),
+  (4, 'mamela');
 
 -- Gammes de produits
 INSERT INTO Gammes (id, nom) VALUES
@@ -60,9 +60,9 @@ INSERT INTO Commandes (id_client, date_commande, date_livraison) VALUES
   (2, '2025-07-05', '2025-07-08');
 
 -- Historique des statuts de commande
-INSERT INTO historique_commandes (id_commande, id_status_commande) VALUES
-  (1, 1),
-  (2, 2);
+INSERT INTO historique_commandes (id_commande, id_statut_commande,date_hist) VALUES
+  (1, 1 , '2025-07-07'),
+  (2, 2 , '2025-07-08');
 
 
 -- Détail des commandes (Ligne_Commandes)
@@ -73,3 +73,19 @@ INSERT INTO Ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix) 
 INSERT INTO paiement_commandes (id_commande, montant, date_paiement) VALUES
   ( 1, 4500, '2025-07-05'),
   ( 2, 5400, '2025-07-06')
+  INSERT INTO Detail_Mouvement_Produits (id_employe, id_lot, emplacement, commentaire) VALUES
+  (1, 4, 'Entrepôt principal - Rayon A1', 'Déplacement pour stockage initial.');
+
+UPDATE commandes
+SET date_livraison = '2025-07-05'
+WHERE id = 1;
+
+INSERT INTO Commandes (id_client, date_commande, date_livraison) VALUES
+  (1, '2025-07-01', '2025-07-03'),
+  (2, '2025-07-02', '2025-07-04'),
+  (3, '2025-07-03', '2025-07-05'),
+  (4, '2025-07-04', '2025-07-06'),
+  (1, '2025-07-05', '2025-07-07'),
+  (2, '2025-07-06', '2025-07-08'),
+  (3, '2025-07-07', '2025-07-09'),
+  (4, '2025-07-08', '2025-07-10');
