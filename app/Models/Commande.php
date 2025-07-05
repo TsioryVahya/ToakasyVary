@@ -14,4 +14,6 @@ class Commande extends Model {
     public function lignes() {
         return $this->hasMany(LigneCommande::class, 'id_commande');
     }
+
+    
 }
