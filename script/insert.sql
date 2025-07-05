@@ -21,17 +21,17 @@ VALUES
     -- ======= Ajout des données de référence =======
 
 -- Clients
-INSERT INTO Clients (id, nom) VALUES
+INSERT INTO clients (id, nom) VALUES
   (1, 'Andry Rabe'),
   (2, 'Miora Ranaivo');
 
 -- Gammes de produits
-INSERT INTO Gammes (id, nom) VALUES
+INSERT INTO gammes (id, nom) VALUES
   (1, 'Jus Mangue'),
   (2, 'Jus Litchi');
 
 -- Statuts de commande
-INSERT INTO Statut_Commandes (nom) VALUES 
+INSERT INTO statut_Commandes (nom) VALUES 
   ('ouvert'),
   ('valider'),
   ('annuler');
@@ -45,7 +45,7 @@ INSERT INTO prix (id_gamme, prix_unitaire, date_debut, date_fin) VALUES
     (2, 'Grande', 1.0);
 
 -- Lots de production
-INSERT INTO Lot_Productions (
+INSERT INTO lot_Productions (
   id_gamme, id_bouteille, date_debut, date_mise_en_bouteille, date_commercialisation, nombre_bouteilles
 ) VALUES
   (1, 1, '2025-07-01', '2025-07-02', '2025-07-04', 500),
@@ -55,7 +55,7 @@ INSERT INTO Lot_Productions (
 
 -- Commandes
 -- On suppose que les statuts 'ouvert', 'valider', 'annuler' ont les IDs 1, 2, 3
-INSERT INTO Commandes (id_client, date_commande, date_livraison) VALUES
+INSERT INTO commandes (id_client, date_commande, date_livraison) VALUES
   (1, '2025-07-05', '2025-07-07'),
   (2, '2025-07-05', '2025-07-08');
 
@@ -67,9 +67,9 @@ INSERT INTO historique_commandes (id_commande, id_status_commande) VALUES
 
 -- Détail des commandes (Ligne_Commandes)
 -- Supposons que les IDs des prix soient 1 et 2
-INSERT INTO Ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix) VALUES
-  (1, 4, 2, 1),
-  (2, 3, 3, 2);
+INSERT INTO ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix) VALUES
+  (1, 2, 2, 1),
+  (2, 1, 3, 2);
 INSERT INTO paiement_commandes (id_commande, montant, date_paiement) VALUES
   ( 1, 4500, '2025-07-05'),
-  ( 2, 5400, '2025-07-06')
+  ( 2, 5400, '2025-07-06');

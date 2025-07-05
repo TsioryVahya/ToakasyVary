@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement("
-        CREATE VIEW stats AS
+        CREATE OR REPLACE VIEW stats AS
         SELECT
             gammes.nom AS nom,
             commandes.total AS montant,

@@ -272,6 +272,7 @@ class CreateAllTables extends Migration
             $table->id();
             $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
             $table->foreignId('id_status_commande')->constrained('statut_commandes')->onDelete('cascade');
+            $table->date('date_mouvement');
             $table->timestamps();
         });
         // Table Gamme_Matiere

@@ -9,6 +9,8 @@ use App\Models\TypeBouteille;
 use App\Models\MouvementStockMatierePremiere;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Client;
+use App\Models\LigneCommande;
 use Carbon\Carbon;
 
 class CommandeController extends Controller
@@ -17,8 +19,10 @@ class CommandeController extends Controller
     {
         $gammes = Gamme::all();
         $typesBouteilles = TypeBouteille::all();
-        return view('commandes.preview', compact('gammes', 'typesBouteilles'));
+        $clients = Client::all();
+        return view('commandes.preview', compact('clients','gammes', 'typesBouteilles'));
     }
+
 
     public function preview(Request $request)
     {
@@ -37,7 +41,7 @@ class CommandeController extends Controller
         ];
 
         foreach ($request->lignes as $ligne) {
-            $gamme = Gamme::with('lots')->find($ligne['id_gamme']);
+            $gamme = Gamme::with('lotProductions')->find($ligne['id_gamme']);
             $quantiteDemandee = $ligne['quantite_bouteilles'];
             $typeBouteille = TypeBouteille::where('id', $ligne['id_bouteille'])->get()[0];
 
@@ -94,98 +98,6 @@ class CommandeController extends Controller
         }
 
         return view('commandes.result', compact('result'));
-    }
-    public function is_validated(Request $request)
-    {
-        $condition=[];
-        $condition['delais_temps'] = 0;
-        $condition['matiere_premiere'] = 0;
-        //atao table commande where id_statut_commande = 4
-        $request->validate([
-            'date_livraison' => 'required|date|after:today',
-            'lignes.*.id_gamme' => 'required|exists:gammes,id',
-            'lignes.*.quantite_bouteilles' => 'required|integer|min:1',
-            'lignes.*.id_bouteille' => 'required|integer|min:1',
-        ]);
-
-        $result = [
-            'stocks_disponibles' => [],
-            'faisabilite' => [],
-            'stocks_manquants' => [],
-            'commande' => $request->all(), // Stocker pour enregistrement ultérieur
-        ];
-
-        foreach ($request->lignes as $ligne) {
-            $gamme = Gamme::with('lots')->find($ligne['id_gamme']);
-            $quantiteDemandee = $ligne['quantite_bouteilles'];
-            $typeBouteille = TypeBouteille::where('id', $ligne['id_bouteille'])->get()[0];
-
-            // Stocks disponibles (somme des bouteilles dans les lots de la gamme)
-            $stockDisponible = DB::table('vue_reste_bouteilles_par_lot')
-                    ->where('id_gamme', $gamme->id)
-                    ->where('id_bouteille', $ligne['id_bouteille'])
-                    ->sum('reste_bouteilles');
-            $result['stocks_disponibles'][$gamme->id] = [
-                'gamme' => $gamme->nom,
-                'quantite' => $stockDisponible,
-                'type_bouteille' => $typeBouteille->nom,
-            ];
-            $result['quantite_demandee'][$gamme->id] = $quantiteDemandee;
-
-            // Vérifier faisabilité temporelle
-            $joursNecessaires = $gamme->fermentation_jours + $gamme->vieillissement_jours;
-            $dateLivraison = Carbon::parse($request->date_livraison);
-            $datePossible = Carbon::today()->addDays($joursNecessaires);
-            $faisableDansDelais = $dateLivraison->greaterThanOrEqualTo($datePossible);
-
-            if ($stockDisponible >= $quantiteDemandee) {
-                $result['faisabilite'][$gamme->id] = 'Réalisable dans le délai';
-                $result['date_disponibilite'][$gamme->id] = Carbon::today();
-                $result['date_livraison'][$gamme->id] = $dateLivraison;
-            } 
-            else 
-            {
-                if ($faisableDansDelais)
-                {
-                    $result['faisabilite'][$gamme->id] = 'Réalisable dans le délai';
-                }
-                else 
-                {
-                    $result['faisabilite'][$gamme->id] = 'Réalisable hors délai';
-                    $condition['delais_temps'] = 1;
-                }
-
-                $result['date_disponibilite'][$gamme->id] = $datePossible;
-                $result['date_livraison'][$gamme->id] = $dateLivraison;
-                $result['manquant'][$gamme->id] = max(0, $quantiteDemandee - $stockDisponible);
-                
-
-                if ($result['manquant'][$gamme->id] > 0) {
-                    // Vérifier matières premières
-                    $matieres = GammeMatiere::where('id_gamme', $gamme->id)->get();
-                    foreach ($matieres as $matiere) {
-                        $quantiteRequise = $matiere->quantite * $result['manquant'][$gamme->id];
-                        $stockMatiere = MouvementStockMatierePremiere::where('id_matiere', $matiere->id_matiere)
-                            ->sum('quantite');
-
-                        if ($stockMatiere < $quantiteRequise) 
-                        {
-                            $condition['matiere_premiere'] = 1;
-                            $result['stocks_manquants'][] = [
-                                'matiere' => $matiere->matiere->nom,
-                                'quantite_manquante' => $quantiteRequise - $stockMatiere,
-                                'gamme' => $gamme->nom,
-                                'type_bouteille' => $typeBouteille->nom,
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-         return view('commandes.result', [
-            'result' => $result,
-            'condition' => $condition
-        ]);
     }
 
     public function open_command(Request $request)
