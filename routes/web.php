@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MatierePremiereController;
 use App\Http\Controllers\MouvementStockMatierePremiereController;
+use App\Http\Controllers\LotProductionController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -51,6 +52,11 @@ Route::resource('matieres', MatierePremiereController::class)->except(['show']);
 Route::resource('mouvementsStockMatierePremiere', MouvementStockMatierePremiereController::class)->except(['show']);
 
 
+Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
+
+Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionController::class, 'getLotData'])
+    ->name('lot_productions.data')
+    ->middleware('auth');
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {

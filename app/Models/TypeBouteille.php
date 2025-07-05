@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 class TypeBouteille extends Model
 {
     protected $table = 'type_bouteilles';
-    protected $fillable = ['nom', 'capacite'];
-    public $timestamps = true;
+    
+    protected $fillable = [
+        'nom',
+        'capacite'
+    ];
 
-    public function lots()
+    public function lotProductions()
     {
         return $this->hasMany(LotProduction::class, 'id_bouteille');
     }
