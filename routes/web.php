@@ -10,6 +10,8 @@ use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MatierePremiereController;
+use App\Http\Controllers\MouvementStockMatierePremiereController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -43,6 +45,12 @@ Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm
 Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
 Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
 Route::get('/stockProduitsFinis/all', [StockProduitsFinisController::class, 'showAllStocks'])->name('stockProduitsFinis.all');
+
+// CRUD pour Matiere premiere
+Route::resource('matieres', MatierePremiereController::class)->except(['show']);
+Route::resource('mouvementsStockMatierePremiere', MouvementStockMatierePremiereController::class)->except(['show']);
+
+
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
