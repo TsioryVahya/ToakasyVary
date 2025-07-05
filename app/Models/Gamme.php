@@ -18,6 +18,11 @@ class Gamme extends Model {
         return $this->hasMany(LotProduction::class, 'id_gamme');
     }
 
+    public function lots()  
+    {
+        return $this->hasMany(LotProduction::class, 'id_gamme');
+    }
+
     public function vieillissements()
     {
         return $this->hasMany(Vieillissement::class, 'id_gamme');
