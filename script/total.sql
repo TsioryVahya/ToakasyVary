@@ -270,6 +270,12 @@ CREATE TABLE Commande (
   CONSTRAINT check_total_non_negatif CHECK (total >= 0)
 );
 
+--historique commande
+CREATE TABLE historique_Commande (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_commande
+);
+
 -- Détails de commande
 CREATE TABLE Ligne_Commande (
   id_commande INT,
