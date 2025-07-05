@@ -1,10 +1,15 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\StockProduitsFinisController;
+use App\Http\Controllers\HistoriqueVenteController;
+use App\Http\Controllers\StatController;
+use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\CalendarController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -20,6 +25,19 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/statForm', [StatController::class, 'statForm']);
+Route::post('/stat_vente', [StatController::class, 'stat_vente'])->name('stat_vente');
+
+Route::get('/production/histogram', [ProductionController::class, 'showHistogram'])->name('production.histogram');
+Route::post('/production/filter', [ProductionController::class, 'filterHistogram'])->name('production.filter');
+Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique'])->name('historique_vente');
+
+Route::get('/suivistock', function () {
+    return view('stock.suivistock');
+})->name('suivistock')->middleware('auth');
+
+Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
+Route::get('/production/calendar/data', [CalendarController::class, 'getVieillissementData'])->name('production.calendar.data');
 
 Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
 Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');

@@ -212,29 +212,45 @@ CREATE TABLE Statut_Commande (
 
 -- Commandes
 CREATE TABLE Commande (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_commande INT AUTO_INCREMENT PRIMARY KEY,
   id_client INT NOT NULL,
   date_commande DATE NOT NULL,
   date_livraison DATE,
   id_statut_commande INT DEFAULT 1,
-  total DECIMAL(10,2) DEFAULT 0,
   FOREIGN KEY (id_client) REFERENCES Client(id),
-  FOREIGN KEY (id_statut_commande) REFERENCES Statut_Commande(id),
-  CONSTRAINT check_total_non_negatif CHECK (total >= 0)
+  FOREIGN KEY (id_statut_commande) REFERENCES Statut_Commande(id)
 );
 
+CREATE TABLE paiement_commande(
+  id_paiement_commande INT PRIMARY KEY,
+  id_commande INT NOT NULL,
+  montant INT NOT NULL,
+  date_paiement date
+);
 -- Détails de commande
 CREATE TABLE Ligne_Commande (
   id_commande INT,
   id_lot INT,
   quantite_bouteilles INT NOT NULL,
-  prix_unitaire DECIMAL(10,2) NOT NULL,
+  id_prix INT NOT NULL, --prix unitaire
   PRIMARY KEY (id_commande, id_lot),
   FOREIGN KEY (id_commande) REFERENCES Commande(id),
   FOREIGN KEY (id_lot) REFERENCES Lot_Production(id),
   CONSTRAINT check_quantite_bouteilles_cmd_positive CHECK (quantite_bouteilles > 0),
   CONSTRAINT check_prix_unitaire_non_negatif CHECK (prix_unitaire >= 0)
 );
+
+-- Prix unitaire des gammes
+CREATE TABLE prix(
+  id_prix INT PRIMARY KEY AUTO_INCREMENT,
+  id_gamme INT NOT NULL,
+  prix_unitaire DECIMAL(10,2) NOT NULL,
+  date_debut DATE NOT NULL,
+  date_fin DATE,
+  FOREIGN KEY (id_gamme) REFERENCES Gamme(id),
+  CONSTRAINT check_prix_unitaire_positive CHECK (prix_unitaire > 0)
+);
+
 -- Table d'association entre Mouvement_Produits et Commande
 CREATE TABLE Mouvement_Produits_Commande (
     id_mouvement_produit INT,
