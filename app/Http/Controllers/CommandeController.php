@@ -127,6 +127,12 @@ class CommandeController extends Controller
                 'id_statut_commande' => 1,
                 'total' => $prix* $ligne['quantite_bouteilles'],
             ]);
+            $commande->save();
+            $insert_historique = DB::table('historique_commandes')->insert([
+                'id_commandes' => $commande->id,
+                'id_status_commandes' => 1,
+            ]);
+            
         }
         // $commande = \App\Models\Commande::create([
         //     'id_client' => 1, // À adapter (client par défaut ou autre logique)
