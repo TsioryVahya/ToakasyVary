@@ -4,10 +4,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\StockProduitsFinisController;
 use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MatierePremiereController;
+use App\Http\Controllers\MouvementStockMatierePremiereController;
 use App\Http\Controllers\LotProductionController;
 use App\Http\Controllers\CommandeController;
 
@@ -39,6 +43,16 @@ Route::get('/suivistock', function () {
 
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
 Route::get('/production/calendar/data', [CalendarController::class, 'getVieillissementData'])->name('production.calendar.data');
+
+Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
+Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
+Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
+Route::get('/stockProduitsFinis/all', [StockProduitsFinisController::class, 'showAllStocks'])->name('stockProduitsFinis.all');
+
+// CRUD pour Matiere premiere
+Route::resource('matieres', MatierePremiereController::class)->except(['show']);
+Route::resource('mouvementsStockMatierePremiere', MouvementStockMatierePremiereController::class)->except(['show']);
+
 
 Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
 
