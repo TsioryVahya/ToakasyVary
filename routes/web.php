@@ -8,6 +8,7 @@ use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\LotProductionController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -33,6 +34,11 @@ Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique']
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
 Route::get('/production/calendar/data', [CalendarController::class, 'getCalendarData'])->name('production.calendar.data');
 
+Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
+
+Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionController::class, 'getLotData'])
+    ->name('lot_productions.data')
+    ->middleware('auth');
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
