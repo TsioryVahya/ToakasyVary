@@ -33,10 +33,8 @@ class CommandeController extends Controller
             'lignes.*.id_bouteille' => 'required|integer|min:1',
             'id_client' => 'required|exists:clients,id',
         ]);
-        $lot=[];
         $result = [
             'id_client' => $request->id_client,
-            'date_livraison' => Carbon::parse($request->date_livraison),
             'stocks_disponibles' => [],
             'faisabilite' => [],
             'stocks_manquants' => [],
@@ -114,7 +112,6 @@ class CommandeController extends Controller
                 }
             }
         }
-        $result['lot_dispo']=$lot;
         return view('commandes.result', compact('result'));
     }
 
