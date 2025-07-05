@@ -40,7 +40,8 @@ class CommandeController extends Controller
             'stocks_disponibles' => [],
             'faisabilite' => [],
             'stocks_manquants' => [],
-            'commande' => $request->all()        
+            'commande' => $request->all(),
+            'lots_disponibles' => [], // Added to store available lots
         ];
 
         foreach ($request->lignes as $ligne) 
@@ -54,18 +55,26 @@ class CommandeController extends Controller
                     ->where('id_gamme', $gamme->id)
                     ->where('id_bouteille', $ligne['id_bouteille'])
                     ->sum('reste_bouteilles');
-
-            $result['stocks_disponibles'][$gamme->id] = [
+            $result['stocks_disponibles'][$gamme->id . '-' . $ligne['id_bouteille']] = [
                 'gamme' => $gamme->nom,
                 'quantite' => $stockDisponible,
                 'type_bouteille' => $typeBouteille->nom,
             ];
+            $result['quantite_demandee'][$gamme->id . '-' . $ligne['id_bouteille']] = $quantiteDemandee;
 
-            $lot[] = DB::table('vue_reste_bouteilles_par_lot')
+            // Fetch available lots for this gamme-typeBouteille pair
+            $lots = DB::table('vue_reste_bouteilles_par_lot')
                     ->where('id_gamme', $gamme->id)
-                    ->where('id_bouteille', $ligne['id_bouteille']);
-
-            $result['quantite_demandee'][$gamme->id] = $quantiteDemandee;
+                    ->where('id_bouteille', $ligne['id_bouteille'])
+                    ->where('reste_bouteilles', '>', 0)
+                    ->get(['id_lot', 'reste_bouteilles'])
+                    ->toArray();
+            $result['lots_disponibles'][$gamme->id . '-' . $ligne['id_bouteille']] = array_map(function ($lot) {
+                return [
+                    'id_lot' => $lot->id_lot,
+                    'quantite_disponible' => $lot->reste_bouteilles,
+                ];
+            }, $lots);
 
             // Vérifier faisabilité temporelle
             $joursNecessaires = $gamme->fermentation_jours + $gamme->vieillissement_jours;
@@ -74,23 +83,22 @@ class CommandeController extends Controller
             $faisableDansDelais = $dateLivraison->greaterThanOrEqualTo($datePossible);
 
             if ($stockDisponible >= $quantiteDemandee) {
-                $result['faisabilite'][$gamme->id] = 'Réalisable dans le délai';
-                $result['date_disponibilite'][$gamme->id] = Carbon::today();
-                $result['date_livraison'][$gamme->id] = $dateLivraison;
+                $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Réalisable dans le délai';
+                $result['date_disponibilite'][$gamme->id . '-' . $ligne['id_bouteille']] = Carbon::today();
+                $result['date_livraison'][$gamme->id . '-' . $ligne['id_bouteille']] = $dateLivraison;
             } else {
-                if ($faisableDansDelais) $result['faisabilite'][$gamme->id] = 'Réalisable dans le délai';
-                else $result['faisabilite'][$gamme->id] = 'Réalisable hors délai';
+                if ($faisableDansDelais) $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Réalisable dans le délai';
+                else $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Réalisable hors délai';
 
-                $result['date_disponibilite'][$gamme->id] = $datePossible;
-                $result['date_livraison'][$gamme->id] = $dateLivraison;
-                $result['manquant'][$gamme->id] = max(0, $quantiteDemandee - $stockDisponible);
-                
+                $result['date_disponibilite'][$gamme->id . '-' . $ligne['id_bouteille']] = $datePossible;
+                $result['date_livraison'][$gamme->id . '-' . $ligne['id_bouteille']] = $dateLivraison;
+                $result['manquant'][$gamme->id . '-' . $ligne['id_bouteille']] = max(0, $quantiteDemandee - $stockDisponible);
 
-                if ($result['manquant'][$gamme->id] > 0) {
+                if ($result['manquant'][$gamme->id . '-' . $ligne['id_bouteille']] > 0) {
                     // Vérifier matières premières
                     $matieres = GammeMatiere::where('id_gamme', $gamme->id)->get();
                     foreach ($matieres as $matiere) {
-                        $quantiteRequise = $matiere->quantite * $result['manquant'][$gamme->id];
+                        $quantiteRequise = $matiere->quantite * $result['manquant'][$gamme->id . '-' . $ligne['id_bouteille']];
                         $stockMatiere = MouvementStockMatierePremiere::where('id_matiere', $matiere->id_matiere)
                             ->sum('quantite');
 
