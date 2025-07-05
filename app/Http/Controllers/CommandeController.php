@@ -9,8 +9,11 @@ use App\Models\TypeBouteille;
 use App\Models\MouvementStockMatierePremiere;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Client;
 use App\Models\LigneCommande;
+use App\Models\Commande;
+use App\Models\HistoriqueCommande;
 use Carbon\Carbon;
 
 class CommandeController extends Controller
@@ -117,62 +120,141 @@ class CommandeController extends Controller
 
     public function store(Request $request)
     {
+        // Log the incoming request data for debugging
+        Log::debug('Store Request Data:', $request->all());
+
         $commandeData = json_decode($request->input('commande'), true);
-        // Créer la commande (simplifiée, sans client)
-        $lignes = $commandeData['lignes'];
-        foreach ($lignes as $ligne) {
-            $ligne['id_gamme'] = (int)$ligne['id_gamme'];
-            $ligne['quantite_bouteilles'] = (int)$ligne['quantite_bouteilles'];
-            $ligne['id_bouteille'] = (int)$ligne['id_bouteille'];
+        $lotsAllocation = $request->input('lots_allocation', []);
+
+        // Validate that lots_allocation is not empty
+        if (empty($lotsAllocation)) {
+            Log::warning('No lots allocated in the request.');
+            return redirect()->back()->with('error', 'Aucune allocation de lots fournie.');
         }
-        foreach ($lignes as $ligne) {
-            $prix= DB::table('prix')
-                ->where('id_gamme', $ligne['id_gamme'])
-                ->where('date_debut', '<=', now())
-                ->where('date_fin', '>=', now())
-                ->value('prix_unitaire');
-                
-            $commande = \App\Models\Commande::create([
-                'id_client' => $commandeData['id_client'], // À adapter (client par défaut ou autre logique)
-                'date_commande' => now(),
+
+        // Validate total allocated quantities match requested quantities
+        foreach ($commandeData['lignes'] as $index => $ligne) {
+            $key = $ligne['id_gamme'] . '-' . $ligne['id_bouteille'];
+            $totalAllocated = 0;
+            if (isset($lotsAllocation[$key])) {
+                foreach ($lotsAllocation[$key] as $lotId => $quantite) {
+                    $totalAllocated += (int)$quantite;
+                }
+            }
+            if ($totalAllocated != $ligne['quantite_bouteilles']) {
+                Log::warning("Quantity mismatch for gamme {$ligne['id_gamme']}-bouteille {$ligne['id_bouteille']}: demanded {$ligne['quantite_bouteilles']}, allocated {$totalAllocated}");
+                return redirect()->back()->with('error', "La quantité allouée pour la gamme {$ligne['id_gamme']} ne correspond pas à la quantité demandée.");
+            }
+        }
+
+        // Start a transaction
+        DB::beginTransaction();
+
+        try {
+            // Create the command
+            $commande = Commande::create([
+                'id_client' => 1, // À adapter
+                'date_commande' => Carbon::today(),
                 'date_livraison' => $commandeData['date_livraison'],
                 'id_statut_commande' => 1,
-                'total' => $prix* $ligne['quantite_bouteilles'],
+                'total' => 0,
             ]);
+
+            Log::info('Commande created:', ['id' => $commande->id]);
+
+            $total = 0;
+
+            // Process each line and allocate lots
+            foreach ($commandeData['lignes'] as $index => $ligne) {
+                $key = $ligne['id_gamme'] . '-' . $ligne['id_bouteille'];
+                if (isset($lotsAllocation[$key])) {
+                    foreach ($lotsAllocation[$key] as $lotId => $quantite) {
+                        if ((int)$quantite > 0) {
+                            // Fetch the lot to get id_gamme
+                            $lot = LotProduction::find($lotId);
+                            if (!$lot) {
+                                Log::error("Lot ID {$lotId} not found.");
+                                throw new \Exception("Lot ID {$lotId} non trouvé.");
+                            }
+
+                            // Log all prices for the gamme to debug
+                            $allPrices = DB::table('prix')
+                                ->where('id_gamme', $lot->id_gamme)
+                                ->get()
+                                ->toArray();
+                            Log::debug('All prices for gamme ID ' . $lot->id_gamme, $allPrices);
+
+                            // Find the applicable price for the gamme
+                            $today = Carbon::today();
+                            Log::debug('Current date for price query:', ['today' => $today->toDateString()]);
+
+                            $prix = DB::table('prix')
+                                ->where('id_gamme', $lot->id_gamme)
+                                ->where(function ($query) use ($today) {
+                                    $query->whereNull('date_debut')
+                                          ->whereNull('date_fin')
+                                          ->orWhere(function ($query) use ($today) {
+                                              $query->where('date_debut', '<=', $today)
+                                                    ->where('date_fin', '>=', $today);
+                                          });
+                                })
+                                ->orderByRaw('CASE WHEN date_debut IS NULL AND date_fin IS NULL THEN 1 ELSE 0 END, date_debut DESC')
+                                ->first();
+
+                            if (!$prix) {
+                                Log::error("No valid price found for gamme ID {$lot->id_gamme}.");
+                                throw new \Exception("Aucun prix valide trouvé pour la gamme ID {$lot->id_gamme}. Vérifiez les dates dans la table prix.");
+                            }
+
+                            Log::info('Price selected for gamme ID ' . $lot->id_gamme, (array)$prix);
+
+                            // Create ligne_commande
+                            $ligneCommande = LigneCommande::create([
+                                'id_commande' => $commande->id,
+                                'id_lot' => $lotId,
+                                'quantite_bouteilles' => $quantite,
+                                'id_prix' => $prix->id,
+                            ]);
+
+                            Log::info('LigneCommande created:', [
+                                'id_commande' => $commande->id,
+                                'id_lot' => $lotId,
+                                'quantite' => $quantite,
+                                'id_prix' => $prix->id
+                            ]);
+
+                            $total += $quantite * $prix->prix_unitaire;
+                        }
+                    }
+                }
+            }
+
+            // Update the command total
+            $commande->total = $total;
             $commande->save();
-            $insert_historique = DB::table('historique_commandes')->insert([
-                'id_commandes' => $commande->id,
-                'id_status_commandes' => 1,
+
+            Log::info('Commande updated with total:', ['id' => $commande->id, 'total' => $total]);
+
+            // Insert into historique_commandes
+            $historique = HistoriqueCommande::create([
+                'id_commande' => $commande->id,
+                'id_status_commande' => 1,
+                'date_hist' => Carbon::today(),
             ]);
-            
+
+            Log::info('HistoriqueCommande created:', [
+                'id_commande' => $commande->id,
+                'id_status_commandes' => 1
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving commande:', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Erreur lors de l\'enregistrement de la commande: ' . $e->getMessage());
         }
-        // $commande = \App\Models\Commande::create([
-        //     'id_client' => 1, // À adapter (client par défaut ou autre logique)
-        //     'date_commande' => now(),
-        //     'date_livraison' => $commandeData['date_livraison'],
-        //     'id_statut_commande' => 1,
-        //     'total' => 0,
-        // ]);
-        
-        // // Enregistrer les lignes (associer à un lot existant ou fictif)
-        // foreach ($commandeData['lignes'] as $ligne) {
-        //     $lot = LotProduction::where('id_gamme', $ligne['id_gamme'])->first();
-        //     if ($lot) {
-        //         \App\Models\LigneCommande::create([
-        //             'id_commande' => $commande->id,
-        //             'id_lot' => $lot->id,
-        //             'quantite_bouteilles' => $ligne['quantite_bouteilles'],
-        //             'prix_unitaire' => 10.00, // À adapter
-        //         ]);
-        //     }
-        // }
-
-        // $commande->total = $commande->lignes->sum(function ($ligne) {
-        //     return $ligne->quantite_bouteilles * $ligne->prix_unitaire;
-        // });
-        $commande->save();
-
-        return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
     }
     public function commandes()
     {
