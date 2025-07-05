@@ -161,8 +161,7 @@
                     backgroundColor: 'rgba(255, 0, 0, 0.5)',
                     borderColor: 'rgb(247, 4, 4)',
                     borderWidth: 5,
-                    type: 'line', // Change en type ligne pour mieux distinguer
-                    yAxisID: 'y1' // Utilise un axe Y secondaire
+                     // Change en type ligne pour mieux distinguer
                 }
             ]
         },
