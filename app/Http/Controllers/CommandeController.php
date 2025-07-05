@@ -103,41 +103,6 @@ class CommandeController extends Controller
         return view('commandes.result', compact('result'));
     }
 
-    public function open_command(Request $request)
-    {
-        $commandeData = json_decode($request->input('commande'), true);
-        // Créer la commande (simplifiée, sans client)
-
-        $commande = \App\Models\Commande::create([
-            'id_client' => , // À adapter (client par défaut ou autre logique)
-            'date_commande' => now(),
-            'date_livraison' => $commandeData['date_livraison'],
-            'id_statut_commande' => 1,
-            'total' => 0,
-        ]);
-        
-        // Enregistrer les lignes (associer à un lot existant ou fictif)
-        foreach ($commandeData['lignes'] as $ligne) {
-            $lot = LotProduction::where('id_gamme', $ligne['id_gamme'])->first();
-            if ($lot) {
-                \App\Models\LigneCommande::create([
-                    'id_commande' => $commande->id,
-                    'id_lot' => $lot->id,
-                    'quantite_bouteilles' => $ligne['quantite_bouteilles'],
-                    'prix_unitaire' => 10.00, // À adapter
-                ]);
-            }
-        }
-
-        $commande->total = $commande->lignes->sum(function ($ligne) {
-            return $ligne->quantite_bouteilles * $ligne->prix_unitaire;
-        });
-        $commande->save();
-
-        return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
-    }
-    
-
     public function store(Request $request)
     {
         $commandeData = json_decode($request->input('commande'), true);
