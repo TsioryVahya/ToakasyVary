@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement("
-            CREATE VIEW vue_debut_production_lot AS
+            CREATE OR REPLACE VIEW vue_debut_production_lot AS
             SELECT
                 lot_productions.id AS id_lot,
                 lot_productions.id_gamme AS id_gamme,

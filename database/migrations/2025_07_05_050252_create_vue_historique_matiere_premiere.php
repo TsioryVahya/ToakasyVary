@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement("
-            CREATE VIEW vue_historique_matiere_premiere AS
+            CREATE OR REPLACE VIEW vue_historique_matiere_premiere AS
             SELECT
                 matiere_premieres.id AS id,
                 matiere_premieres.nom AS nom,
