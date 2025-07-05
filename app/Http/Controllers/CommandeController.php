@@ -33,17 +33,18 @@ class CommandeController extends Controller
             'lignes.*.id_bouteille' => 'required|integer|min:1',
             'id_client' => 'required|exists:clients,id',
         ]);
-
+        $lot=[];
         $result = [
             'id_client' => $request->id_client,
             'date_livraison' => Carbon::parse($request->date_livraison),
             'stocks_disponibles' => [],
             'faisabilite' => [],
             'stocks_manquants' => [],
-            'commande' => $request->all(), // Stocker pour enregistrement ultérieur
+            'commande' => $request->all()        
         ];
 
-        foreach ($request->lignes as $ligne) {
+        foreach ($request->lignes as $ligne) 
+        {
             $gamme = Gamme::with('lotProductions')->find($ligne['id_gamme']);
             $quantiteDemandee = $ligne['quantite_bouteilles'];
             $typeBouteille = TypeBouteille::where('id', $ligne['id_bouteille'])->get()[0];
@@ -53,11 +54,17 @@ class CommandeController extends Controller
                     ->where('id_gamme', $gamme->id)
                     ->where('id_bouteille', $ligne['id_bouteille'])
                     ->sum('reste_bouteilles');
+
             $result['stocks_disponibles'][$gamme->id] = [
                 'gamme' => $gamme->nom,
                 'quantite' => $stockDisponible,
                 'type_bouteille' => $typeBouteille->nom,
             ];
+
+            $lot[] = DB::table('vue_reste_bouteilles_par_lot')
+                    ->where('id_gamme', $gamme->id)
+                    ->where('id_bouteille', $ligne['id_bouteille']);
+
             $result['quantite_demandee'][$gamme->id] = $quantiteDemandee;
 
             // Vérifier faisabilité temporelle
@@ -99,7 +106,7 @@ class CommandeController extends Controller
                 }
             }
         }
-
+        $result['lot_dispo']=$lot;
         return view('commandes.result', compact('result'));
     }
 
