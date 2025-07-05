@@ -216,9 +216,18 @@ CREATE TABLE Commande (
   id_client INT NOT NULL,
   date_commande DATE NOT NULL,
   date_livraison DATE,
-  id_statut_commande INT DEFAULT 1,
   FOREIGN KEY (id_client) REFERENCES Client(id),
   FOREIGN KEY (id_statut_commande) REFERENCES Statut_Commande(id)
+);
+
+--historique commande
+CREATE TABLE historique_commande (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_commande INT,
+  id_statut_commande INT,
+  date_hist DATE,
+  FOREIGN KEY (id_commande) REFERENCES commandes(id),
+  FOREIGN KEY (id_statut_commande) REFERENCES statut_commandes(id)
 );
 
 CREATE TABLE paiement_commande(
@@ -228,7 +237,7 @@ CREATE TABLE paiement_commande(
   date_paiement date
 );
 -- Détails de commande
-CREATE TABLE Ligne_Commande (
+CREATE TABLE Ligne_Commandes (
   id_commande INT,
   id_lot INT,
   quantite_bouteilles INT NOT NULL,
