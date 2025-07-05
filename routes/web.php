@@ -13,6 +13,8 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MatierePremiereController;
 use App\Http\Controllers\MouvementStockMatierePremiereController;
 use App\Http\Controllers\LotProductionController;
+use App\Http\Controllers\CommandeController;
+
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -57,6 +59,10 @@ Route::resource('/production/lot_productions', LotProductionController::class)->
 Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionController::class, 'getLotData'])
     ->name('lot_productions.data')
     ->middleware('auth');
+Route::get('/commande', [CommandeController::class, 'commandes'])->name('commandes');
+Route::get('/commande/anulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
+Route::get('/commande/valider', [CommandeController::class, 'valider'])->name('commandes.valider');
+
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
