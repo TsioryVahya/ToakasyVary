@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Commande extends Model {
-    protected $table = "Commande";
+    protected $table = "commandes";
     protected $fillable = ['id_client', 'date_commande', 'date_livraison', 'id_statut_commande', 'total'];
 
     public function client() {
