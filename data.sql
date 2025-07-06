@@ -31,16 +31,16 @@ INSERT INTO clients (nom, id_type_client, email, telephone, adresse, created_at,
 ('Client B', 2, 'b@example.com', '0600000002', 'Adresse B', NOW(), NOW());
 
 -- 7. Commandes
-INSERT INTO commandes (id_client, date_commande, id_statut_commande, total, created_at, updated_at) VALUES
-(1, '2025-01-10', 1, 1000, NOW(), NOW()),
-(2, '2025-02-15', 2, 1400, NOW(), NOW()),
-(1, '2025-03-20', 3, 1600, NOW(), NOW());
+INSERT INTO commandes (id_client, date_commande, total, created_at, updated_at) VALUES
+(1, '2025-01-10', 1000, NOW(), NOW()),
+(2, '2025-02-15', 1400, NOW(), NOW()),
+(1, '2025-03-20', 1600, NOW(), NOW());
 
 -- 8. Lignes de commande
-INSERT INTO ligne_commandes (id_commande, id_lot, quantite_bouteilles, prix_unitaire, created_at, updated_at) VALUES
-(1, 1, 100, 10.00, NOW(), NOW()),
-(2, 2, 140, 10.00, NOW(), NOW()),
-(3, 3, 160, 10.00, NOW(), NOW());
+INSERT INTO ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix, created_at, updated_at) VALUES
+(1, 1, 100, 4, NOW(), NOW()),
+(2, 2, 140, 3, NOW(), NOW()),
+(3, 3, 160, 3, NOW(), NOW());
 
 -- 9. Ventes
 INSERT INTO ventes (id_commande, date_vente, montant, created_at, updated_at) VALUES

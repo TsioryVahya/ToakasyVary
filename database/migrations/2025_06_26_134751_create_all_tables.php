@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
 class CreateAllTables extends Migration
 {
     public function up()
@@ -215,30 +215,48 @@ class CreateAllTables extends Migration
             $table->foreignId('id_client')->constrained('clients')->onDelete('cascade');
             $table->date('date_commande');
             $table->date('date_livraison')->nullable();
-            $table->foreignId('id_statut_commande')->nullable()->default(1)->constrained('statut_commandes')->onDelete('set null');
             $table->decimal('total', 10, 2)->default(0);
             $table->timestamps();
         });
+        //table commande_paiments
+        Schema::create('paiement_commandes', function (Blueprint $table) {
+            $table->id(); // Clé primaire personnalisée
+            $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
+            $table->integer('montant');
+            $table->date('date_paiement')->nullable();
+            $table->timestamps();
 
+        });
+        
+        Schema::create('prix', function (Blueprint $table) {
+            $table->id(); // Clé primaire auto-incrémentée
+            $table->foreignId('id_gamme')->constrained('gammes')->onDelete('cascade'); // lien avec la table "gammes"
+            $table->decimal('prix_unitaire', 10, 2);
+            $table->date('date_debut');
+            $table->date('date_fin')->nullable();
+            $table->timestamps();
+
+        });
         // Table Ligne_Commande
         Schema::create('ligne_commandes', function (Blueprint $table) {
             $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
             $table->foreignId('id_lot')->constrained('lot_productions')->onDelete('cascade');
             $table->integer('quantite_bouteilles');
-            $table->decimal('prix_unitaire', 10, 2);
+            $table->foreignId('id_prix')->constrained('prix')->onDelete('cascade');
             $table->primary(['id_commande', 'id_lot']);
             $table->timestamps();
         });
-
+        
         // Table Mouvement_Produits_Commande
-        Schema::create('mouvement_produits_commandes', function (Blueprint $table) {
-            $table->foreignId('id_mouvement_produit')->constrained('mouvement_produits')->onDelete('cascade');
-            $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
-            $table->integer('quantite');
-            $table->dateTime('date_association')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->primary(['id_mouvement_produit', 'id_commande']);
-            $table->timestamps();
-        });
+            Schema::create('mouvement_produits_commandes', function (Blueprint $table) {
+                $table->foreignId('id_mouvement_produit')->constrained('mouvement_produits')->onDelete('cascade');
+                $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
+                $table->integer('quantite');
+                $table->dateTime('date_association')->default(DB::raw('CURRENT_TIMESTAMP'));
+                $table->primary(['id_mouvement_produit', 'id_commande']);
+                $table->timestamps();
+            });
+        
 
         // Table Vente
         Schema::create('ventes', function (Blueprint $table) {
@@ -249,6 +267,13 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
+        //hitorique commande 
+        Schema::create('historique_commandes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
+            $table->foreignId('id_status_commande')->constrained('statut_commandes')->onDelete('cascade');
+            $table->timestamps();
+        });
         // Table Gamme_Matiere
         Schema::create('gamme_matieres', function (Blueprint $table) {
             $table->foreignId('id_gamme')->constrained('gammes')->onDelete('cascade');
@@ -257,6 +282,7 @@ class CreateAllTables extends Migration
             $table->primary(['id_gamme', 'id_matiere']);
             $table->timestamps();
         });
+       
     }
 
     public function down()
@@ -264,9 +290,12 @@ class CreateAllTables extends Migration
         Schema::dropIfExists('gamme_matieres');
         Schema::dropIfExists('ventes');
         Schema::dropIfExists('mouvement_produits_commandes');
+        Schema::dropIfExists('prix');
         Schema::dropIfExists('ligne_commandes');
         Schema::dropIfExists('commandes');
+        Schema::dropIfExists('historique_commandes');
         Schema::dropIfExists('statut_commandes');
+        Schema::dropIfExists('paiement_commandes');
         Schema::dropIfExists('controle_qualites');
         Schema::dropIfExists('mouvement_produits');
         Schema::dropIfExists('detail_mouvement_produits');

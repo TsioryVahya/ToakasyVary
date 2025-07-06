@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class CommandeController extends Controller
 {
-
     public function commandes()
     {
          $commandes = DB::select("

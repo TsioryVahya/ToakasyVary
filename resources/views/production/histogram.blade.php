@@ -5,35 +5,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Production Histogram - ToakaVary</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/a2e0e6c6f2.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body {
-            background-color: #0c0c0c;
-            color: white;
-        }
-        .sidebar {
-            width: 16rem;
-            background-color: #1b1b1b;
-        }
-        .main-content {
-            background-color: #1b1b1b;
-        }
-        .gold-text {
-            color: #cdb587;
-        }
-        .input-field {
-            background-color: #2d2d2d;
-            border: 1px solid #3d3d3d;
-            color: white;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #cdb587;
-        }
         .chart-container {
             position: relative;
             height: 400px;
@@ -42,10 +15,10 @@
             margin: 20px auto;
         }
         .filter-container {
-            background: #2d2d2d;
+            background: white;
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #3d3d3d;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             max-width: 800px;
             margin: 0 auto;
         }
@@ -62,117 +35,81 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #cdb587;
+            color: #2e8555;
             font-weight: 500;
         }
         select, input {
             width: 100%;
             padding: 8px 12px;
-            border: 1px solid #3d3d3d;
+            border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
-            background-color: #2d2d2d;
-            color: white;
         }
         button {
-            background-color: #cdb587;
-            color: #1b1b1b;
+            background-color: #2e8555;
+            color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: bold;
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #d9c9a3;
+            background-color: #1e6b45;
         }
         .loading {
             text-align: center;
             padding: 20px;
             display: none;
-            color: #cdb587;
         }
     </style>
 </head>
-<body class="min-h-screen flex">
-
-<!-- Sidebar -->
-<div class="sidebar text-white p-5 flex flex-col">
-    <img src="../img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
-    <nav class="flex-1">
-        <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 bg-gray-800 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i> Dashboard
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-industry mr-3 w-5 text-center"></i> Production
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-boxes mr-3 w-5 text-center"></i> Stocks
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-calendar mr-3 w-5 text-center"></i> Calendrier
-        </a>
-        <a href="/statForm" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Statistiques des ventes
-        </a>
-        <a href="{{ route('production.histogram') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>
-            Statistiques des productions
-        </a>
-        <a href="{{ route('historique_vente') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-history mr-3 w-5 text-center"></i>
-            Historique Vente
-        </a>
-    </nav>
-    <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
-        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i> Déconnexion
-    </a>
-</div>
-
-<!-- Main Content -->
-<main class="flex-grow p-6 overflow-auto">
-    <div class="main-content rounded-lg shadow-lg p-6">
-        <h1 class="text-3xl font-bold gold-text mb-6 text-center">Histogramme de Production</h1>
+<body class="bg-light-green font-sans antialiased">
+    <div class="container">
+        <h1 style="text-align: center; color: #2e8555; margin-bottom: 20px;">Production Histogram</h1>
 
         <div class="filter-container">
             <form id="filterForm" class="filter-form">
                 <div class="filter-group">
                     <label for="id_gamme">Gamme</label>
-                    <select id="id_gamme" name="id_gamme" class="input-field">
-                        <option value="">Toutes les gammes</option>
-                        <option value="1">Gamme 1</option>
-                        <option value="2">Gamme 2</option>
-                        <option value="3">Gamme 3</option>
-                    </select>
+                    <!-- <select id="id_gamme" name="id_gamme" required>
+                        @foreach($gammes as $gamme)
+                            <option value="{{ $gamme }}">Gamme {{ $gamme }}</option>
+                        @endforeach
+                        <option value="1">1</option>
+                    </select> -->
+                    <!-- Dans la partie select de gamme -->
+                        <select id="id_gamme" name="id_gamme">
+                            <option value="">Toutes les gammes</option> <!-- Option vide pour tout afficher -->
+                            <option value="1">Gamme 1</option>
+                            <option value="2">Gamme 2</option>
+                            <option value="3">Gamme 3</option>
+                        </select>
                 </div>
 
                 <div class="filter-group">
                     <label for="date_debut">Date début</label>
-                    <input type="date" id="date_debut" name="date_debut" required class="input-field">
+                    <input type="date" id="date_debut" name="date_debut" required>
                 </div>
 
                 <div class="filter-group">
                     <label for="date_fin">Date fin</label>
-                    <input type="date" id="date_fin" name="date_fin" required class="input-field">
+                    <input type="date" id="date_fin" name="date_fin" required>
                 </div>
 
-                <button type="submit" class="flex items-center">
-                    <i class="fas fa-filter mr-2"></i> Filtrer
-                </button>
+                <button type="submit">Filtrer</button>
             </form>
         </div>
 
         <div class="loading" id="loading">
-            <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des données...
+            Chargement des données...
         </div>
 
         <div class="chart-container">
             <canvas id="productionChart"></canvas>
         </div>
     </div>
-</main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -330,24 +267,24 @@
                     console.error('Error:', error);
                     document.getElementById('loading').style.display = 'none';
                 });
-        }
+            }
 
-        // Écouter la soumission du formulaire
-        document.getElementById('filterForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Écouter la soumission du formulaire
+            document.getElementById('filterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
 
-            const formData = {
-                id_gamme: this.id_gamme.value,
-                date_debut: this.date_debut.value,
-                date_fin: this.date_fin.value
-            };
+                const formData = {
+                    id_gamme: this.id_gamme.value,
+                    date_debut: this.date_debut.value,
+                    date_fin: this.date_fin.value
+                };
 
-            fetchData(formData);
+                fetchData(formData);
+            });
+
+            // Charger les données initiales
+            loadInitialData();
         });
-
-        // Charger les données initiales
-        loadInitialData();
-    });
-</script>
+    </script>
 </body>
 </html>

@@ -4,13 +4,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\StockProduitsFinisController;
 use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MatierePremiereController;
+use App\Http\Controllers\MouvementStockMatierePremiereController;
 use App\Http\Controllers\LotProductionController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\ClientController;
+
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -33,6 +38,10 @@ Route::get('/production/histogram', [ProductionController::class, 'showHistogram
 Route::post('/production/filter', [ProductionController::class, 'filterHistogram'])->name('production.filter');
 Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique'])->name('historique_vente');
 
+Route::get('/suivistock', function () {
+    return view('stock.suivistock');
+})->name('suivistock')->middleware('auth');
+
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
 Route::get('/production/calendar/data', [CalendarController::class, 'getCalendarData'])->name('production.calendar.data');
 
@@ -48,11 +57,25 @@ Route::post('/production/commandes/annuler', [CommandeController::class, 'annule
 Route::get('/clients/nombre', [ClientController::class, 'nombreClients'])->name('clients.nombre');
 
 
+Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
+Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
+Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
+Route::get('/stockProduitsFinis/all', [StockProduitsFinisController::class, 'showAllStocks'])->name('stockProduitsFinis.all');
+
+// CRUD pour Matiere premiere
+Route::resource('matieres', MatierePremiereController::class)->except(['show']);
+Route::resource('mouvementsStockMatierePremiere', MouvementStockMatierePremiereController::class)->except(['show']);
+
+
 Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
 
 Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionController::class, 'getLotData'])
     ->name('lot_productions.data')
     ->middleware('auth');
+Route::get('/commande', [CommandeController::class, 'commandes'])->name('commandes');
+Route::get('/commande/anulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
+Route::get('/commande/valider', [CommandeController::class, 'valider'])->name('commandes.valider');
+
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
