@@ -120,7 +120,7 @@ class VieillissementTestSeeder extends Seeder
                 'id_gamme' => 3,
                 'id_bouteille' => 3,
                 'date_debut' => Carbon::now()->subDays(400)->format('Y-m-d'),
-                'date_mise_en_bouteille' =>null,
+                'date_mise_en_bouteille' =>null,//misy valeur
                 'date_commercialisation' => null,
                 'nombre_bouteilles' => floor(200 / 1.0), // 200L / 1.0L
                 'created_at' => Carbon::now(),
@@ -140,7 +140,7 @@ class VieillissementTestSeeder extends Seeder
                 'updated_at' => Carbon::now()
             ],
 
-            // Lot futur moyen de gamme (10 tonnes = 1000L)
+            // Lot  moyen de gamme termine (10 tonnes = 1000L)
             [
                 'id' => 5,
                 'id_gamme' => 2,
