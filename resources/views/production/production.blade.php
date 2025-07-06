@@ -284,4 +284,70 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-6">Nouveau Lot de Production</h2>
             
-            <form id="lotForm" action="{{ route('lot_productions.store') }}" method="POST" class="space
+            <form id="lotForm" action="{{ route('lot_productions.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div id="methodField"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="id_gamme" class="block text-sm font-medium text-gray-700 mb-2">
+                            Gamme * <span class="text-xs text-gray-500">(affecte les durées de production)</span>
+                        </label>
+                        <select name="id_gamme" id="id_gamme" required onchange="calculateDates()"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Sélectionnez une gamme</option>
+                            @foreach($gammes as $gamme)
+                                <option value="{{ $gamme->id }}" 
+                                        data-fermentation="{{ $gamme->fermentation_jours }}"
+                                        data-vieillissement="{{ $gamme->vieillissement_jours }}">
+                                    {{ $gamme->nom }} ({{ $gamme->fermentation_jours }}j fermentation + {{ $gamme->vieillissement_jours }}j vieillissement)
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="id_bouteille" class="block text-sm font-medium text-gray-700 mb-2">
+                            Type de Bouteille *
+                        </label>
+                        <select name="id_bouteille" id="id_bouteille" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Sélectionnez un type</option>
+                            @foreach($typeBouteilles as $type)
+                                <option value="{{ $type->id }}">{{ $type->nom }} ({{ $type->capacite }}L)</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="date_debut" class="block text-sm font-medium text-gray-700 mb-2">
+                            Date de Début *
+                        </label>
+                        <input type="date" name="date_debut" id="date_debut" required onchange="calculateDates()"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label for="nombre_bouteilles" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre de Bouteilles
+                        </label>
+                        <input type="number" name="nombre_bouteilles" id="nombre_bouteilles" min="1"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitBtn"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Créer le Lot
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
