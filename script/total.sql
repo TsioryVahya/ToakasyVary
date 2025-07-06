@@ -270,6 +270,12 @@ CREATE TABLE Commande (
   CONSTRAINT check_total_non_negatif CHECK (total >= 0)
 );
 
+--historique commande
+CREATE TABLE historique_Commande (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_commande
+);
+
 -- Détails de commande
 CREATE TABLE Ligne_Commande (
   id_commande INT,
@@ -384,7 +390,7 @@ INSERT INTO Recette (nom, id_gamme, description, fermentation_jours) VALUES
 INSERT INTO Recette_Matiere (id_recette, id_matiere, quantite) VALUES 
   (1, 1, 1000), -- 1000 kg de riz
   (1, 2, 5);    -- 5 kg de houblon
-INSERT INTO Type_Bouteille (nom, capacite, materiau) VALUES 
+INSERT INTO Type_Bouteilles (nom, capacite, materiau) VALUES 
   ('Bouteille 33cl', 0.33, 'verre'),
   ('Bouteille 75cl', 0.75, 'verre');
 INSERT INTO Statut_Lot (nom) VALUES ('en fermentation'), ('prêt'), ('vendu');

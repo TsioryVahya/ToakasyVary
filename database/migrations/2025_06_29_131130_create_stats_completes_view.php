@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE VIEW stats_completes AS
+        DB::statement("CREATE OR REPLACE VIEW stats_completes AS
             SELECT
                 gammes.nom AS nom,
                 commandes.total AS montant,
@@ -23,7 +23,7 @@ return new class extends Migration
                 commandes.date_livraison AS date_livraison,
                 SUM(gamme_matieres.quantite * COALESCE(prix_materiels.prix, 0)) AS cout_matiere_unitaire,
                 SUM(gamme_matieres.quantite * COALESCE(prix_materiels.prix, 0)) * ligne_commandes.quantite_bouteilles AS depense_total,
-                (ligne_commandes.quantite_bouteilles * ligne_commandes.prix_unitaire) -
+                (ligne_commandes.quantite_bouteilles * table_prix.prix_unitaire) -
                 (SUM(gamme_matieres.quantite * COALESCE(prix_materiels.prix, 0)) * ligne_commandes.quantite_bouteilles) AS marge
             FROM
                 commandes
@@ -35,6 +35,9 @@ return new class extends Migration
                 gammes ON lot_productions.id_gamme = gammes.id
             JOIN
                 gamme_matieres ON gammes.id = gamme_matieres.id_gamme
+            JOIN
+                prix AS table_prix ON ligne_commandes.id_prix = table_prix.id 
+                AND commandes.date_commande BETWEEN table_prix.date_debut AND table_prix.date_fin
             LEFT JOIN
                 prix_materiels ON gamme_matieres.id_matiere = prix_materiels.id_matiere_premiere
             GROUP BY
@@ -42,7 +45,7 @@ return new class extends Migration
                 gammes.nom,
                 commandes.total,
                 ligne_commandes.quantite_bouteilles,
-                ligne_commandes.prix_unitaire,
+                table_prix.prix_unitaire,
                 commandes.date_commande,
                 commandes.date_livraison;
             ");

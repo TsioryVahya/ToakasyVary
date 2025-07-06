@@ -20,6 +20,31 @@ GROUP BY
 ORDER BY 
     date
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO gammes (
     nom,
     description,
@@ -58,3 +83,27 @@ INSERT INTO type_bouteilles (nom, capacite, created_at, updated_at) VALUES
 ('Bouteille 50cl', 0.50, NOW(), NOW()),
 ('Bouteille 75cl', 0.75, NOW(), NOW()),
 ('Magnum 1.5L',    1.50, NOW(), NOW());
+
+
+
+SELECT
+    CASE 
+        WHEN montant_paye < prixUnitaire* montant_ligne THEN 0
+        WHEN montant_paye = prixUnitaire* montant_ligne THEN 1 
+    END AS validations
+     FROM vue_details_commandes where idCommamde=?;
+
+SELECT Max(idhistorique) FROM vue_details_commandes groupe by idCommande;
+
+
+SELECT FROM vue_details_commandes where (SELECT Max(idhistorique) FROM vue_details_commandes group by idCommande) as hist = 1 group by id_client, nom, date_commande, date_livraison, id_statut_commande;
+
+SELECT v1.*
+FROM vue_details_commandes v1
+INNER JOIN (
+    SELECT idCommande, MAX(idhistorique) as max_hist
+    FROM vue_details_commandes
+    GROUP BY idCommande
+) v2 ON v1.idCommande = v2.idCommande AND v1.idhistorique = v2.max_hist
+WHERE v1.idstatus = 1  -- Condition ajoutée ici
+GROUP BY v1.id_client, v1.nom, v1.date_commande, v1.date_livraison, v1.idstatus

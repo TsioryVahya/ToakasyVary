@@ -1,0 +1,34 @@
+lot_productions
+    id
+    id_gamme foreign key gammes(id)
+    id_bouteille foreign key type_bouteille(id)
+    date_debut
+    date_mise_en_bouteille
+    date_commercialisation
+    nombre_bouteilles
+
+historique_commandes
+    id
+    id_commande foreign key commandes(id)
+    id_status_commandes foreign key statut_commandes(id)
+    date_hist
+
+commandes
+    id
+    id_client foreign key clients(id)
+    date_livraison
+    date_commande
+    total
+
+prix
+    id
+    id_gamme foreign key gammes(id)
+    prix_unitaire
+    date_debut
+    date_fin
+
+ligne_commandes
+    id_commande foreign key commandes(id)
+    id_lot foreign key lot_productions(id)
+    quantite_bouteilles
+    id_prix foreign key prix(id)

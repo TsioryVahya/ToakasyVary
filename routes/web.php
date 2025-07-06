@@ -4,11 +4,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\StockProduitsFinisController;
 use App\Http\Controllers\HistoriqueVenteController;
 use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MatierePremiereController;
+use App\Http\Controllers\MouvementStockMatierePremiereController;
 use App\Http\Controllers\LotProductionController;
+
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -38,11 +43,37 @@ Route::get('/suivistock', function () {
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
 Route::get('/production/calendar/data', [CalendarController::class, 'getVieillissementData'])->name('production.calendar.data');
 
+Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
+Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
+Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
+// Route pour afficher les stocks avec filtre de date optionnel
+Route::get('/stocks/produits-finis', [StockProduitsFinisController::class, 'showAllStocks'])
+    ->name('stocks.produits-finis.all');
+
+// Route alternative avec paramètre de date explicite
+Route::get('/stocks/produits-finis/{date}', [StockProduitsFinisController::class, 'showAllStocks'])
+    ->name('stocks.produits-finis.date')
+    ->where('date', '\d{4}-\d{2}-\d{2}');
+
+// Route API pour obtenir les messages de stock faible pour une date
+Route::get('/api/stocks/low-stock-messages/{date?}', [StockProduitsFinisController::class, 'getLowStockMessages'])
+    ->name('api.stocks.low-stock-messages')
+    ->where('date', '\d{4}-\d{2}-\d{2}');
+
+// CRUD pour Matiere premiere
+Route::resource('matieres', MatierePremiereController::class)->except(['show']);
+Route::resource('mouvementsStockMatierePremiere', MouvementStockMatierePremiereController::class)->except(['show']);
+
+
 Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
 
 Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionController::class, 'getLotData'])
     ->name('lot_productions.data')
     ->middleware('auth');
+Route::get('/commande', [CommandeController::class, 'commandes'])->name('commandes');
+Route::get('/commande/anulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
+Route::get('/commande/valider', [CommandeController::class, 'valider'])->name('commandes.valider');
+
 /*
 // Routes d'authentification de Breeze
 Route::group(['middleware' => ['guest']], function () {
