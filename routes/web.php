@@ -9,6 +9,8 @@ use App\Http\Controllers\StatController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\LotProductionController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\ClientController;
 
 // Rediriger la racine vers la page de connexion
 Route::get('/', function () {
@@ -33,6 +35,18 @@ Route::get('/historique_vente', [HistoriqueVenteController::class, 'historique']
 
 Route::get('/production/calendar', [CalendarController::class, 'calendar'])->name('production.calendar');
 Route::get('/production/calendar/data', [CalendarController::class, 'getCalendarData'])->name('production.calendar.data');
+
+// Affichage des commandes
+Route::get('/production/commandes', [CommandeController::class, 'commandes'])->name('production.commandes');
+// Validation d'une commande
+Route::post('/production/commandes/valider', [CommandeController::class, 'valider'])->name('production.valider');
+// Annulation d'une commande
+Route::post('/production/commandes/annuler', [CommandeController::class, 'annuler'])->name('production.annuler');
+
+
+
+Route::get('/clients/nombre', [ClientController::class, 'nombreClients'])->name('clients.nombre');
+
 
 Route::resource('/production/lot_productions', LotProductionController::class)->middleware('auth');
 

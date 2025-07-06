@@ -50,20 +50,27 @@
             <i class="fas fa-boxes mr-3 w-5 text-center"></i>
             Stocks
         </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>
-            Statistiques
-        </a>
         <a href="{{ route('production.calendar') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-calendar mr-3 w-5 text-center"></i>
+            <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
             Calendrier
         </a>
+        <a href="{{ route('production.commandes') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+            <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
+            Commandes des clients
+        </a>
         <a href="/statForm" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>Statistiques des ventes
+            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>
+            Statistiques des ventes
+        </a>
+        <a href="{{ route('production.histogram') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>
+            Statistiques des productions
         </a>
         <a href="{{ route('historique_vente') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Historique Vente
+            <i class="fas fa-history mr-3 w-5 text-center"></i>
+            Historique Vente
         </a>
+
 
     </nav>
     <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
@@ -117,7 +124,7 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-sm font-medium text-gray-400">CLIENTS</p>
-                        <h3 class="text-2xl font-bold mt-1">15</h3>
+                        <h3 class="text-2xl font-bold mt-1">{{ $nombreClients }}</h3>
                         <p class="text-sm text-red-400 mt-2">
                             <i class="fas fa-arrow-down mr-1"></i> +2% semaine passée
                         </p>
@@ -127,6 +134,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="bg-[#2a2a2a] rounded-lg shadow p-6">
                 <div class="flex justify-between items-start">
                     <div>

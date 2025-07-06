@@ -6,6 +6,8 @@
     <title>Calendrier - ToakaVary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/a2e0e6c6f2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/">
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/calendar.js'])
     <style>
         .event-dot {
@@ -24,38 +26,65 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+        body {
+            background-color: #0c0c0c;
+        }
+        .sidebar-custom {
+            background-color: #1b1b1b;
+        }
+        .sidebar-custom a:hover {
+            background-color: #2d2d2d;
+        }
+        .chart-placeholder {
+            background: linear-gradient(to right, #2a2a2a 8%, #3a3a3a 18%, #2a2a2a 33%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+        .custom-curve {
+            background-color: #cdb587;
+        }
     </style>
 </head>
 <body class="bg-[#0c0c0c] text-white font-sans antialiased min-h-screen flex">
 
 <!-- Sidebar -->
-<div class="w-64 bg-[#1b1b1b] text-white p-5 flex flex-col">
+<div class="w-64 sidebar-custom text-white p-5 flex flex-col">
     <img src="../img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
     <nav class="flex-1">
         <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 bg-gray-800 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i> Dashboard
+            <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i>
+            Dashboard
         </a>
         <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-industry mr-3 w-5 text-center"></i> Production
+            <i class="fas fa-industry mr-3 w-5 text-center"></i>
+            Production
         </a>
         <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-boxes mr-3 w-5 text-center"></i> Stocks
+            <i class="fas fa-boxes mr-3 w-5 text-center"></i>
+            Stocks
         </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Statistiques
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 bg-[#cdb587] text-black hover:bg-opacity-80 transition">
-            <i class="fas fa-calendar mr-3 w-5 text-center"></i> Calendrier
+        <a href="{{ route('production.calendar') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+            <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
+            Calendrier
         </a>
         <a href="/statForm" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>Statistiques des ventes
+            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i>
+            Statistiques des ventes
         </a>
         <a href="{{ route('historique_vente') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Historique Vente
+            <i class="fas fa-history mr-3 w-5 text-center"></i>
+            Historique Vente
         </a>
+
+
     </nav>
     <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
-        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i> Déconnexion
+        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i>
+        Déconnexion
     </a>
 </div>
 

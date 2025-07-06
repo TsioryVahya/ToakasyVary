@@ -15,42 +15,35 @@ class ProductionController extends Controller
 
     public function filterHistogram(Request $request)
     {
-        \Log::info('Requête AJAX reçue', [
-            'donnees_recues' => $request->all(),
-            'ip' => $request->ip(),
-            'url' => $request->fullUrl()
-        ]);
-    
         $request->validate([
-            'id_gamme' => 'nullable|integer|in:1,2,3', // Rend le filtre optionnel
+            'id_gamme' => 'nullable|integer|in:1,2,3',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut'
         ]);
-        
-        \Log::debug('Données validées', $request->only(['id_gamme', 'date_debut', 'date_fin']));
-    
-        // Construction de la requête de base
+
         $query = DB::table('lot_productions as lp')
             ->join('type_bouteilles as tb', 'lp.id_bouteille', '=', 'tb.id')
+            ->join('gammes as g', 'lp.id_gamme', '=', 'g.id') // Jointure avec la table gammes
             ->select(
-                DB::raw('DATE(lp.date_mise_en_bouteille) as date'),
+                DB::raw('DATE(DATE_ADD(lp.date_debut, INTERVAL g.fermentation_jours DAY)) as date'),
                 DB::raw('SUM(CASE WHEN lp.id_gamme = 1 THEN tb.capacite * lp.nombre_bouteilles ELSE 0 END) as litre_gamme1'),
                 DB::raw('SUM(CASE WHEN lp.id_gamme = 2 THEN tb.capacite * lp.nombre_bouteilles ELSE 0 END) as litre_gamme2'),
                 DB::raw('SUM(CASE WHEN lp.id_gamme = 3 THEN tb.capacite * lp.nombre_bouteilles ELSE 0 END) as litre_gamme3'),
                 DB::raw('SUM(lp.nombre_bouteilles) as nombre_bouteilles')
             )
-            ->whereBetween('lp.date_mise_en_bouteille', [$request->date_debut, $request->date_fin]);
-    
-        // Ajout du filtre par gamme si spécifié
+            ->whereBetween(
+                DB::raw('DATE(DATE_ADD(lp.date_debut, INTERVAL g.fermentation_jours DAY))'),
+                [$request->date_debut, $request->date_fin]
+            );
+
         if ($request->has('id_gamme') && $request->id_gamme) {
             $query->where('lp.id_gamme', $request->id_gamme);
         }
-    
-        // Exécution de la requête finale
-        $results = $query->groupBy(DB::raw('DATE(lp.date_mise_en_bouteille)'))
+
+        $results = $query->groupBy(DB::raw('DATE(DATE_ADD(lp.date_debut, INTERVAL g.fermentation_jours DAY))'))
             ->orderBy('date')
             ->get();
-    
+
         return response()->json([
             'dates' => $results->pluck('date'),
             'litreData' => [
