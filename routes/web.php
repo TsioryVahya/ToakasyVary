@@ -13,7 +13,6 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MatierePremiereController;
 use App\Http\Controllers\MouvementStockMatierePremiereController;
 use App\Http\Controllers\LotProductionController;
-use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\ClientController;
 
 
