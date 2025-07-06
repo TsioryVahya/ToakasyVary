@@ -77,11 +77,22 @@
                     <span class="text-red-600 text-sm">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="mb-4">
+                <select name="id_client" required class="p-2 border rounded">
+                        <option value="">Sélectionner un client</option>
+                        @foreach($clients as $client)
+                        <option value="{{ $client->id }}" {{ old('lignes.0.id_client') == $client->id ? 'selected' : '' }}>
+                            {{ $client->nom }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
             <div id="lignes-container" class="mb-4">
                 <h3 class="text-xl font-semibold mb-2">Lignes de commande</h3>
                 <button type="button" onclick="addLigne()" class="bg-blue-500 text-white px-4 py-2 rounded mb-2">Ajouter une ligne</button>
                 <div class="ligne flex space-x-2 mb-2">
+                    
                     <select name="lignes[0][id_gamme]" required class="p-2 border rounded">
                         <option value="">Sélectionner une gamme</option>
                         @foreach($gammes as $gamme)
@@ -90,6 +101,7 @@
                             </option>
                         @endforeach
                     </select>
+                    
                     <select name="lignes[0][id_bouteille]" required class="p-2 border rounded">
                         <option value="">Sélectionner type bouteille</option>
                         @foreach($typesBouteilles as $typesBouteille)
