@@ -60,6 +60,9 @@ Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm
 Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
 Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
 Route::get('/stockProduitsFinis/all', [StockProduitsFinisController::class, 'showAllStocks'])->name('stockProduitsFinis.all');
+Route::get('/commande/sortie-stock/{id}', [CommandeController::class, 'sortirStockSelonCommande']);
+Route::get('/stock/commande/{idCommande}', [StockProduitsFinisController::class, 'stockSelonCommande'])->name('stock.par_commande');
+
 
 // CRUD pour Matiere premiere
 Route::resource('matieres', MatierePremiereController::class)->except(['show']);

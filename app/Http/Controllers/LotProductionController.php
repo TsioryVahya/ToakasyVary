@@ -8,13 +8,14 @@ use App\Models\TypeBouteille;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class LotProductionController extends Controller
+class
+LotProductionController extends Controller
 {
     public function index(Request $request)
     {
         $filter = $request->get('filter', 'all');
         $query = LotProduction::with(['gamme', 'typeBouteille']);
-        
+
         // Appliquer les filtres selon le statut
         switch ($filter) {
             case 'fermentation':
@@ -36,22 +37,22 @@ class LotProductionController extends Controller
                 // Pas de filtre, afficher tous
                 break;
         }
-        
+
         $lots = $query->orderBy('created_at', 'desc')->paginate(10);
-        
+
         // Compter les lots par statut pour les badges
         $counts = $this->getStatusCounts();
-        
+
         $gammes = Gamme::all();
         $typeBouteilles = TypeBouteille::all();
-        
+
         return view('production.production', compact('lots', 'gammes', 'typeBouteilles', 'filter', 'counts'));
     }
 
     private function getStatusCounts()
     {
         $now = Carbon::now();
-        
+
         return [
             'all' => LotProduction::count(),
             'fermentation' => LotProduction::where(function($q) use ($now) {
@@ -78,7 +79,7 @@ class LotProductionController extends Controller
 
         // Récupérer la gamme pour calculer les dates
         $gamme = Gamme::findOrFail($request->id_gamme);
-        
+
         // Calculer les dates automatiquement
         $dateDebut = Carbon::parse($request->date_debut);
         $dateMiseEnBouteille = $dateDebut->copy()->addDays($gamme->fermentation_jours);
@@ -108,7 +109,7 @@ class LotProductionController extends Controller
 
         // Récupérer la gamme pour calculer les dates
         $gamme = Gamme::findOrFail($request->id_gamme);
-        
+
         // Calculer les dates automatiquement
         $dateDebut = Carbon::parse($request->date_debut);
         $dateMiseEnBouteille = $dateDebut->copy()->addDays($gamme->fermentation_jours);

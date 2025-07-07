@@ -6,6 +6,7 @@
     <title>Accueil - ToakaVary</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -46,10 +47,11 @@
             <i class="fas fa-industry mr-3 w-5 text-center"></i>
             Production
         </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+        <a href="{{ route('stockProduitsFinis.all') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-boxes mr-3 w-5 text-center"></i>
             Stocks
         </a>
+
         <a href="{{ route('production.calendar') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
             Calendrier

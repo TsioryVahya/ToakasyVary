@@ -103,7 +103,7 @@ class StockProduitsFinisController extends Controller
         // Remaining bottles per lot
         $stocksPerLot = DB::table('vue_reste_bouteilles_par_lot')
             ->select(
-                'id_lot',
+                'vue_reste_bouteilles_par_lot.id',  // au lieu de 'id_lot'
                 'nom_bouteille',
                 'capacite_bouteille',
                 'gammes.nom as nom_gamme',
@@ -114,7 +114,7 @@ class StockProduitsFinisController extends Controller
                 'reste_bouteilles'
             )
             ->join('gammes', 'vue_reste_bouteilles_par_lot.id_gamme', '=', 'gammes.id')
-            ->orderBy('id_lot')
+            ->orderBy('vue_reste_bouteilles_par_lot.id') // ici c'est correct, car id existe
             ->get();
 
         // All possible gamme-bottle combinations with remaining bottles (0 if none)
@@ -122,7 +122,7 @@ class StockProduitsFinisController extends Controller
             ->crossJoin('type_bouteilles')
             ->leftJoin('vue_reste_bouteilles_par_lot', function ($join) {
                 $join->on('gammes.id', '=', 'vue_reste_bouteilles_par_lot.id_gamme')
-                     ->on('type_bouteilles.id', '=', 'vue_reste_bouteilles_par_lot.id_bouteille');
+                    ->on('type_bouteilles.id', '=', 'vue_reste_bouteilles_par_lot.id_bouteille');
             })
             ->select(
                 'gammes.nom as nom_gamme',
@@ -131,9 +131,8 @@ class StockProduitsFinisController extends Controller
                 DB::raw('COALESCE(SUM(vue_reste_bouteilles_par_lot.reste_bouteilles), 0) as total_reste_bouteilles')
             )
             ->groupBy('gammes.nom', 'type_bouteilles.nom', 'type_bouteilles.capacite')
-            ->orderBy('gammes.nom')
-            ->orderBy('type_bouteilles.nom')
             ->get();
+
 
         // Remaining bottles by gamme (including gammes with 0 bottles)
         $stocksByGamme = DB::table('gammes')
@@ -166,7 +165,7 @@ class StockProduitsFinisController extends Controller
         // Check per lot
         foreach ($stocksPerLot as $stock) {
             if ($stock->reste_bouteilles < $threshold && $stock->reste_bouteilles >= 0) {
-                $lowStockMessages[] = "Lot {$stock->id_lot} ({$stock->nom_gamme}, {$stock->nom_bouteille}, {$stock->capacite_bouteille}L): {$stock->reste_bouteilles} bouteilles reste";
+                $lowStockMessages[] = "Lot {$stock->id} ({$stock->nom_gamme}, {$stock->nom_bouteille}, {$stock->capacite_bouteille}L): {$stock->reste_bouteilles} bouteilles reste";
             }
         }
 
@@ -203,7 +202,69 @@ class StockProduitsFinisController extends Controller
             'stocksByGamme' => $stocksByGamme,
             'stocksByBouteille' => $stocksByBouteille,
             'threshold' => $threshold,
-            'notification' => $notification
+            'notification' => !empty($lowStockMessages) ? 'Rupture 10% de stocks:<br>' . implode('<br>', $lowStockMessages) : null,
         ]);
     }
+
+    public function getStockAvantDate($date)
+    {
+        return DB::table('lot_productions as lp')
+            ->leftJoin('mouvement_produits as mp', 'lp.id', '=', 'mp.id_lot')
+            ->where('mp.date_mouvement', '<=', $date)
+            ->select(
+                'lp.id as id',
+                'lp.id_gamme',
+                'lp.id_bouteille',
+                'lp.date_mise_en_bouteille',
+                DB::raw('SUM(mp.quantite_bouteilles) as reste_bouteilles')
+            )
+            ->groupBy('lp.id', 'lp.id_gamme', 'lp.id_bouteille', 'lp.date_mise_en_bouteille')
+            ->get();
+    }
+
+    public function stockSelonCommande($idCommande)
+    {
+        // 1. Récupérer la date de commande
+        $commande = DB::table('commandes')->where('id', $idCommande)->first();
+        if (!$commande) {
+            return back()->with('error', 'Commande non trouvée');
+        }
+
+        $dateCommande = Carbon::parse($commande->date_commande);
+
+        // 2. Calculer les restes de bouteilles par lot avant la date de commande
+        $stocks = DB::table('lot_productions as lp')
+            ->join('gammes as g', 'lp.id_gamme', '=', 'g.id')
+            ->join('type_bouteilles as tb', 'lp.id_bouteille', '=', 'tb.id')
+            ->leftJoin('mouvement_produits as mp', function ($join) use ($dateCommande) {
+                $join->on('lp.id', '=', 'mp.id_lot')
+                    ->where('mp.date_mouvement', '<=', $dateCommande);
+            })
+            ->select(
+                'lp.id',
+                'g.nom as nom_gamme',
+                'tb.nom as nom_bouteille',
+                'tb.capacite as capacite_bouteille',
+                'lp.date_debut',
+                'lp.date_mise_en_bouteille',
+                'lp.date_commercialisation',
+                'lp.nombre_bouteilles',
+                DB::raw('COALESCE(SUM(mp.quantite_bouteilles), 0) as reste_bouteilles')
+            )
+            ->groupBy(
+                'lp.id',
+                'g.nom',
+                'tb.nom',
+                'tb.capacite',
+                'lp.date_debut',
+                'lp.date_mise_en_bouteille',
+                'lp.date_commercialisation',
+                'lp.nombre_bouteilles'
+            )
+            ->orderBy('lp.id')
+            ->get();
+
+        return view('stock.par_commande', compact('stocks', 'commande'));
+    }
+
 }

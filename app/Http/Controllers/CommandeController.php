@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class CommandeController extends Controller
 {
+
     public function commandes()
     {
          $commandes = DB::select("
@@ -169,5 +170,69 @@ public function annuler(Request $request)
         ]);
 
         return back()->with('success', 'Commande annulée avec succès');
+    }
+
+
+    public function sortirStockSelonCommande(int $idCommande)
+    {
+        // 1. Récupérer la commande
+        $commande = DB::table('commandes')->where('id', $idCommande)->first();
+        if (!$commande) {
+            return "Commande non trouvée";
+        }
+
+        $dateCommande = Carbon::parse($commande->date_commande);
+        $quantiteCommande = $commande->total; // OU récupérer la quantité totale de bouteilles à sortir (adapter selon ta structure)
+
+        // 2. Récupérer les lots disponibles avant la date de commande, triés par date_mise_en_bouteille asc
+        $lotsDisponibles = DB::table('vue_reste_bouteilles_par_lot')
+            ->where('date_mise_en_bouteille', '<=', $dateCommande)
+            ->where('reste_bouteilles', '>', 0)
+            ->orderBy('date_mise_en_bouteille', 'asc')
+            ->get();
+
+        $quantiteRestante = $quantiteCommande;
+
+        foreach ($lotsDisponibles as $lot) {
+            if ($quantiteRestante <= 0) {
+                break; // plus rien à sortir
+            }
+
+            $stockRestant = $lot->reste_bouteilles;
+
+            if ($stockRestant >= $quantiteRestante) {
+                // On sort la totalité de la quantité restante de ce lot
+                DB::table('mouvement_produits')->insert([
+                    'id_lot' => $lot->id,
+                    'id_detail_mouvement' => 2, // A adapter selon ta logique (ex: sortie)
+                    'quantite_bouteilles' => -$quantiteRestante,
+                    'date_mouvement' => $dateCommande,
+                ]);
+                $quantiteRestante = 0;
+                break;
+            } else {
+                // On vide ce lot, on soustrait tout son stock restant
+                DB::table('mouvement_produits')->insert([
+                    'id_lot' => $lot->id,
+                    'id_detail_mouvement' => 2,
+                    'quantite_bouteilles' => -$stockRestant,
+                    'date_mouvement' => $dateCommande,
+                ]);
+                $quantiteRestante -= $stockRestant;
+            }
+        }
+
+        if ($quantiteRestante > 0) {
+            return "Stock insuffisant : il manque $quantiteRestante bouteilles pour satisfaire la commande.";
+        }
+
+        // Optionnel : changer le statut de la commande (exemple)
+        DB::table('historique_commandes')->insert([
+            'id_commande' => $idCommande,
+            'id_statut_commande' => 2, // statut "validée" ou "en cours"
+            'date_hist' => Carbon::now(),
+        ]);
+
+        return "Sortie de stock réalisée avec succès pour la commande $idCommande.";
     }
 }

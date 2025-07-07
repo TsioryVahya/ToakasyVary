@@ -88,7 +88,7 @@
     <!-- Données JSON pour JavaScript -->
     <script id="gamme-data" type="application/json">@json($gammes)</script>
     <script id="type-bouteille-data" type="application/json">@json($typeBouteilles)</script>
-    
+
     <!-- Configuration des routes pour JavaScript -->
     <script>
         window.routes = {
@@ -142,28 +142,28 @@
             <div class="mb-6">
                 <div class="flex flex-wrap items-center gap-2 bg-gray-50 p-3 rounded-lg">
                     <span class="text-sm font-medium text-gray-700 mr-2">Filtrer par statut:</span>
-                    
-                    <a href="{{ route('lot_productions.index', ['filter' => 'all']) }}" 
+
+                    <a href="{{ route('lot_productions.index', ['filter' => 'all']) }}"
                        class="filter-tab {{ ($filter ?? 'all') === 'all' ? 'active' : '' }}">
                         Tous
                         <span class="badge">{{ $counts['all'] ?? 0 }}</span>
                     </a>
-                    
-                    <a href="{{ route('lot_productions.index', ['filter' => 'fermentation']) }}" 
+
+                    <a href="{{ route('lot_productions.index', ['filter' => 'fermentation']) }}"
                        class="filter-tab {{ ($filter ?? '') === 'fermentation' ? 'active' : '' }}">
                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                         En Fermentation
                         <span class="badge">{{ $counts['fermentation'] ?? 0 }}</span>
                     </a>
-                    
-                    <a href="{{ route('lot_productions.index', ['filter' => 'vieillissement']) }}" 
+
+                    <a href="{{ route('lot_productions.index', ['filter' => 'vieillissement']) }}"
                        class="filter-tab {{ ($filter ?? '') === 'vieillissement' ? 'active' : '' }}">
                         <span class="w-2 h-2 rounded-full bg-orange-500"></span>
                         En Vieillissement
                         <span class="badge">{{ $counts['vieillissement'] ?? 0 }}</span>
                     </a>
-                    
-                    <a href="{{ route('lot_productions.index', ['filter' => 'commercialise']) }}" 
+
+                    <a href="{{ route('lot_productions.index', ['filter' => 'commercialise']) }}"
                        class="filter-tab {{ ($filter ?? '') === 'commercialise' ? 'active' : '' }}">
                         <span class="w-2 h-2 rounded-full bg-green-500"></span>
                         Commercialisé
@@ -245,7 +245,7 @@
                                     </span>
                                 @endif
                             </td>
-                            
+
                         </tr>
                         @empty
                         <tr>
@@ -283,5 +283,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-6">Nouveau Lot de Production</h2>
-            
-            <form id="lotForm" action="{{ route('lot_productions.store') }}" method="POST" class="space
+
+            <form id="lotForm" action="{{ route('lot_productions.store') }}" method="POST" class="space">
+
+            </form>

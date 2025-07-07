@@ -23,13 +23,13 @@
 <body>
     <div class="container py-4">
         <h1 class="mb-4">Gestion des Commandes</h1>
-        
+
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
-        
+
         <!-- Section des filtres -->
         <div class="filter-section mb-4">
             <h5>Filtrer les commandes</h5>
@@ -58,7 +58,7 @@
                 <button id="showToday" class="btn btn-primary">Livraisons aujourd'hui</button>
             </div>
         </div>
-        
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead class="table-dark">
@@ -116,7 +116,7 @@
             const showToday = document.getElementById('showToday');
             const commandesTable = document.getElementById('commandesTable');
             const rows = commandesTable.getElementsByTagName('tr');
-            
+
             // Fonction pour obtenir la date d'aujourd'hui au format YYYY-MM-DD
             function getTodayDate() {
                 const today = new Date();
@@ -125,7 +125,7 @@
                 const day = String(today.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
-            
+
             // Fonction pour appliquer tous les filtres
             function applyFilters() {
                 const clientValue = clientFilter.value.toLowerCase();
@@ -133,26 +133,26 @@
                 const dateLivraisonValue = dateLivraisonFilter.value;
                 const statutValue = statutFilter.value;
                 const today = getTodayDate();
-                
+
                 for (let row of rows) {
                     const cells = row.getElementsByTagName('td');
                     if (cells.length === 0) continue;
-                    
+
                     const clientCell = cells[0].textContent.toLowerCase();
                     const dateCommandeCell = cells[1].getAttribute('data-date-commande');
                     const dateCommandeFormatted = dateCommandeCell ? new Date(dateCommandeCell).toISOString().split('T')[0] : '';
                     const dateLivraisonCell = cells[2].getAttribute('data-date-livraison');
                     const dateLivraisonFormatted = dateLivraisonCell ? new Date(dateLivraisonCell).toISOString().split('T')[0] : '';
                     const statutCell = cells[3].textContent.trim();
-                    
+
                     // Vérifier chaque condition de filtre
                     const clientMatch = clientValue === '' || clientCell.includes(clientValue);
                     const dateCommandeMatch = dateCommandeValue === '' || dateCommandeFormatted === dateCommandeValue;
-                    const dateLivraisonMatch = dateLivraisonValue === '' || 
-                        (dateLivraisonFormatted === dateLivraisonValue) || 
+                    const dateLivraisonMatch = dateLivraisonValue === '' ||
+                        (dateLivraisonFormatted === dateLivraisonValue) ||
                         (dateLivraisonValue === '' && dateLivraisonCell === null && statutCell === 'Non livré');
                     const statutMatch = statutValue === '' || statutCell === statutValue;
-                    
+
                     // Afficher ou masquer la ligne en fonction des filtres
                     if (clientMatch && dateCommandeMatch && dateLivraisonMatch && statutMatch) {
                         row.style.display = '';
@@ -161,38 +161,38 @@
                     }
                 }
             }
-            
+
             // Fonction pour afficher les livraisons d'aujourd'hui
             function showTodayDeliveries() {
                 const today = getTodayDate();
-                
+
                 for (let row of rows) {
                     const cells = row.getElementsByTagName('td');
                     if (cells.length === 0) continue;
-                    
+
                     const dateLivraisonCell = cells[2].getAttribute('data-date-livraison');
                     const dateLivraisonFormatted = dateLivraisonCell ? new Date(dateLivraisonCell).toISOString().split('T')[0] : '';
-                    
+
                     if (dateLivraisonFormatted === today) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 }
-                
+
                 // Réinitialiser les autres filtres
                 clientFilter.value = '';
                 dateCommandeFilter.value = '';
                 dateLivraisonFilter.value = '';
                 statutFilter.value = '';
             }
-            
+
             // Écouteurs d'événements pour les filtres
             clientFilter.addEventListener('input', applyFilters);
             dateCommandeFilter.addEventListener('change', applyFilters);
             dateLivraisonFilter.addEventListener('change', applyFilters);
             statutFilter.addEventListener('change', applyFilters);
-            
+
             // Réinitialiser les filtres
             resetFilters.addEventListener('click', function() {
                 clientFilter.value = '';
@@ -201,7 +201,7 @@
                 statutFilter.value = '';
                 applyFilters();
             });
-            
+
             // Afficher les livraisons d'aujourd'hui
             showToday.addEventListener('click', showTodayDeliveries);
         });
