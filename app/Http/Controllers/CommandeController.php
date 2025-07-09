@@ -343,7 +343,7 @@ class CommandeController extends Controller
                 ]);
 
             }
-            // return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
+            return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
 
    }
 
