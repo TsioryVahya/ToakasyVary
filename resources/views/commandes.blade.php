@@ -143,29 +143,7 @@
 <body class="min-h-screen flex">
 
     <!-- Sidebar -->
-    <div class="w-64 sidebar-custom text-white p-5 flex flex-col">
-        <img src="../img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
-        <nav class="flex-1">
-            <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 bg-gray-800 hover:bg-opacity-20 hover:bg-white transition">
-                <i class="fas fa-home mr-2"></i> Accueil
-            </a>
-            <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-                <i class="fas fa-boxes mr-2"></i> Produits
-            </a>
-            <a href="{{ route('stockProduitsFinis.all') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-                <i class="fas fa-warehouse mr-2"></i> Stock Produits Finis
-            </a>
-            <a href="{{ route('production.calendar') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-                <i class="fas fa-calendar-alt mr-2"></i> Calendrier Production
-            </a>
-            <a href="{{ route('commandes') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-                <i class="fas fa-file-invoice mr-2"></i> Commandes Production
-            </a>
-        </nav>
-        <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
-            <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-        </a>
-    </div>
+    @include('real_sidebar')
 
     <!-- Main Content -->
     <main class="flex-grow p-6 overflow-auto">

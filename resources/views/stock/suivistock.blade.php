@@ -40,7 +40,7 @@
     </style>
 </head>
 <body class="bg-dark text-secondary">
-    @include('layouts.sidebar')
+    @include('real_sidebar')
     <div class="lg:ml-64 min-h-screen">
         <!-- Header -->
         <header class="bg-dark border-b border-gold p-4">
