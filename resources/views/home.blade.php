@@ -150,9 +150,41 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-sm font-medium text-gray-400">CHIFFRE D'AFFAIRE</p>
-                        <h3 class="text-2xl font-bold mt-1">1.700.000 AR</h3>
+                        <?php
+                            $chiffre=DB::select("
+                                SELECT SUM(montant) AS montant FROM ventes WHERE year(date_vente)=year(Now())
+                            ");
+                            if ($chiffre) 
+                            {
+                                $montant = $chiffre[0]->montant;
+                            } 
+                            else 
+                            {
+                                $montant = 0;
+                            }
+                            $plus=DB::select("
+                                SELECT SUM(montant) AS montant FROM ventes WHERE year(date_vente)=year(Now()) AND month(date_vente)=month(Now())
+                            ");
+                            if ($plus) 
+                            {
+                                $montant_plus= $plus[0]->montant;
+                            }
+                            else
+                            {
+                                $montant_plus = 0;
+                            }
+                            $montant_before=$montant - $montant_plus;
+                            if ($montant_before == 0) {
+                                $pourcentage = 0; // Eviter la division par zéro
+                            } else {
+                                $pourcentage = ($montant_plus * 100) / $montant_before;
+                            }
+
+
+                        ?>
+                        <h3 class="text-2xl font-bold mt-1"><?=$montant ?> AR</h3>
                         <p class="text-sm text-green-400 mt-2">
-                            <i class="fas fa-arrow-up mr-1"></i> +5% ce mois
+                            <i class="fas fa-arrow-up mr-1"></i> <?=$pourcentage ?>% ce mois
                         </p>
                     </div>
                     <div class="bg-purple-900 p-3 rounded-full">
