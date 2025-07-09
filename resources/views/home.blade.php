@@ -60,6 +60,11 @@
             <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
             Calendrier
         </a>
+        <a href="{{ route('commandes.preview') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+            <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
+            Prevision de commandes
+            
+        </a>
         <a href="{{ route('production.commandes') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
             Commandes des clients
