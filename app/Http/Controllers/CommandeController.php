@@ -147,7 +147,6 @@ class CommandeController extends Controller
                 return redirect()->back()->with('error', "La quantité allouée pour la gamme {$ligne['id_gamme']} ne correspond pas à la quantité demandée.");
             }
         }
-
         // Start a transaction
         DB::beginTransaction();
 
@@ -163,7 +162,6 @@ class CommandeController extends Controller
             Log::info('Commande created:', ['id' => $commande->id]);
 
             $total = 0;
-
             // Process each line and allocate lots
             foreach ($commandeData['lignes'] as $index => $ligne) {
                 $key = $ligne['id_gamme'] . '-' . $ligne['id_bouteille'];
@@ -261,6 +259,7 @@ class CommandeController extends Controller
             DB::rollBack();
             Log::error('Error saving commande:', ['message' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Erreur lors de l\'enregistrement de la commande: ' . $e->getMessage());
+
         }
     }
     public function commandes()
@@ -280,7 +279,7 @@ class CommandeController extends Controller
     }
     public function valider(Request $request){
         $request->validate([
-            'idCommande' => 'required|nullable|integer|in:1,2,3', // Rend le filtre optionnel
+            'idCommande' => 'required|nullable|integer', // Rend le filtre optionnel
         ]);
         $idCommande=$request->idCommande;
         $result = DB::select("
@@ -291,69 +290,69 @@ class CommandeController extends Controller
                 END AS validation
             FROM vue_details_commandes
             WHERE idCommande = ?
-        ", [$idCommande]);
-
-        // Vérification si un résultat a été retourné
-        if (empty($result)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Commande non trouvée'
-            ], 404);
-        }
-
+            ", [$idCommande]);
+            
+            // Vérification si un résultat a été retourné
+            if (empty($result)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Commande non trouvée'
+                ], 404);
+            }
+            
         $validation = $result[0]->validation;
 
         // Traitement selon la valeur de validation
         if ($validation === 0) {
               echo "erreur";
-        } elseif ($validation === 1) {
-           // Récupération de toutes les données en UNE SEULE requête
-           $commandeData = DB::table('vue_details_commandes')
-           ->select(
-            'idCommande',
-            'id_lot',
-            'quantite_bouteilles',
-            'date_livraison',
-            DB::raw('SUM(montant_paye) as montant_total') // Ajout du SUM ici
-        )
-        ->where('idCommande', $idCommande)
-        ->groupBy('idCommande', 'id_lot', 'quantite_bouteilles', 'date_livraison') // Groupement nécessaire avec SUM
-        ->first();
-
-    if (!$commandeData) {
-    throw new \Exception("Commande introuvable");
-    }
-
-    // Assignation des valeurs
-    $valid = $commandeData->id_lot;
-    $quantite = $commandeData->quantite_bouteilles;
-    $date = Carbon::parse($commandeData->date_livraison);
-    $montant = $commandeData->montant_total; // Correction de la variable ici
-                DB::table('Mouvement_Produits')->insert([
-                    'id_lot' => $valid,
-                    'id_detail_mouvement'=>2,
-                    'quantite_bouteilles' => -$quantite,
-                    'date_mouvement'=> $date
-                ]);
-            DB::table('historique_commandes')->insert([
-                'id_commande' => $idCommande,
-                'id_status_commande' => 2,
-                'date_hist'=>$date
-            ]);
-
-            DB::table('ventes')->insert([
-                'id_commande' => $idCommande,
-                'date_vente' => $date,
-                'montant' =>$montant
-            ]);
-
-        }
-        return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
-   }
-
+            } elseif ($validation === 1) {
+                // Récupération de toutes les données en UNE SEULE requête
+                $commandeData = DB::table('vue_details_commandes')
+                ->select(
+                    'idCommande',
+                    'id_lot',
+                    'quantite_bouteilles',
+                    'date_livraison',
+                    DB::raw('SUM(montant_paye) as montant_total') // Ajout du SUM ici
+                    )
+                    ->where('idCommande', $idCommande)
+                    ->groupBy('idCommande', 'id_lot', 'quantite_bouteilles', 'date_livraison') // Groupement nécessaire avec SUM
+                    ->first();
+                    
+                    if (!$commandeData) {
+                        throw new \Exception("Commande introuvable");
+                    }
+                    
+                    // Assignation des valeurs
+                    $valid = $commandeData->id_lot;
+                    $quantite = $commandeData->quantite_bouteilles;
+                    $date = Carbon::parse($commandeData->date_livraison);
+                    $montant = $commandeData->montant_total; // Correction de la variable ici
+                    DB::table('Mouvement_Produits')->insert([
+                        'id_lot' => $valid,
+                        'id_detail_mouvement'=>2,
+                        'quantite_bouteilles' => -$quantite,
+                        'date_mouvement'=> $date
+                    ]);
+                    DB::table('historique_commandes')->insert([
+                        'id_commande' => $idCommande,
+                        'id_status_commande' => 2,
+                        'date_hist'=>$date
+                    ]);
+                    
+                    DB::table('ventes')->insert([
+                        'id_commande' => $idCommande,
+                        'date_vente' => $date,
+                        'montant' =>$montant
+                    ]);
+                    
+                }
+                return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
+            }
+            
 public function annuler(Request $request)
-    {
-        $request->validate([
+{
+    $request->validate([
             'idCommande' => 'required|integer|exists:commandes,id',
         ]);
 

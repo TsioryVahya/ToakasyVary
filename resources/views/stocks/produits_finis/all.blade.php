@@ -133,11 +133,6 @@
             </table>
     <!-- Date Filter Section -->
     
-    @if ($notification)
-        <div class="notification">
-            {!! $notification !!}
-        </div>
-
         <div class="section-title">Reste bouteille par Gamme-Type Bouteille</div>
         <div class="table-container">
             <table>
@@ -203,7 +198,7 @@
                         <td>{{ $stock->capacite_bouteille }} L</td>
                         <td>{{ $stock->total_reste_bouteilles }}</td>
                     </tr>
-                 @empty
+                    @empty
                     <tr><td colspan="3">Pas de type de bouteille disponible pour la date {{ $selectedDate }}</td></tr>
                 @endforelse
             </tbody>

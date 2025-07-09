@@ -9,11 +9,7 @@
             <i class="fas fa-industry mr-3 w-5 text-center"></i>
             Production
         </a>
-        <a href="{{ route('commandes.preview') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-industry mr-3 w-5 text-center"></i>
-            Prevision Production
-        </a>
-        <a href="{{ route('stockProduitsFinis.all') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
+        <a href="{{ route('stocks.produits-finis.all') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-boxes mr-3 w-5 text-center"></i>
             Stocks
         </a>

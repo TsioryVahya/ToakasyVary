@@ -164,11 +164,16 @@
                                 WHERE year(date_vente) = year(NOW())
                                 AND month(date_vente) = $i + 1
                             ");
-                            if (empty($stat_vente)) {
-                                $valeur[$i] = 0; // Si pas de vente, valeur est 0
-                            } else {
+                            if (empty($stat_vente)) 
+                            {
+                                $valeur[] = 0; // Si pas de vente, valeur est 0
+                            }
+                            else 
+                            {
+                                $val=($stat_vente[0]->montant)/10000;
+                            
                                 // On divise par 1 million pour l'affichage
-                                $valeur[$i] = $stat_vente[0]->montant / 1000000;
+                                $valeur[] =round($val); // Multiplier par 10 pour l'échelle de la courbe
                             }
                         }
                         for ($i = 0; $i < 12; $i++) 
