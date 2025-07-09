@@ -155,7 +155,7 @@ class CommandeController extends Controller
         try {
             // Create the command
             $commande = Commande::create([
-                'id_client' => 1, // À adapter
+                'id_client' => $commandeData['id_client'], // À adapter
                 'date_commande' => Carbon::today(),
                 'date_livraison' => $commandeData['date_livraison'],
                 'id_statut_commande' => 1,
