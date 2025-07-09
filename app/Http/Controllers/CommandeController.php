@@ -271,7 +271,7 @@ class CommandeController extends Controller
             WHERE v1.idstatus = 1
             GROUP BY v1.id_client, v1.nom, v1.date_commande, v1.date_livraison, v1.idstatus
         ");
-        return view('production.commandes', compact('commandes'));
+        return view('commandes', compact('commandes'));
     }
     public function valider(Request $request){
         $request->validate([
@@ -343,6 +343,8 @@ class CommandeController extends Controller
                 ]);
 
             }
+            // return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
+
    }
 
 //    public function annuler(Request $request){
