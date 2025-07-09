@@ -83,9 +83,9 @@
                     <div>
                         <p class="text-sm font-medium text-gray-400">CLIENTS</p>
                         <h3 class="text-2xl font-bold mt-1">{{ $nombreClients }}</h3>
-                        <p class="text-sm text-red-400 mt-2">
+                        <!-- <p class="text-sm text-red-400 mt-2">
                             <i class="fas fa-arrow-down mr-1"></i> +2% semaine passée
-                        </p>
+                        </p> -->
                     </div>
                     <div class="bg-orange-900 p-3 rounded-full">
                         <i class="fas fa-user-plus text-orange-400 text-xl"></i>

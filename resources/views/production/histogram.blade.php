@@ -127,9 +127,14 @@
                     <label for="id_gamme" class="block text-gray-300 mb-2">Gamme</label>
                     <select id="id_gamme" name="id_gamme" class="input-field">
                         <option value="">Toutes les gammes</option>
-                        <option value="1">Haut de gamme</option>
-                        <option value="2">Moyen de gamme</option>
-                        <option value="3">standard</option>
+
+                        <?php
+                        $gammes = \App\Models\Gamme::all();
+                        foreach ($gammes as $gamme) 
+                        {
+                            echo "<option value=\"{$gamme->id}\">{$gamme->nom}</option>";
+                        }
+                        ?>
                     </select>
                 </div>
 
