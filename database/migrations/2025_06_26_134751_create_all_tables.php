@@ -78,7 +78,7 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        
+
 
         // Table Type_Materiel
         Schema::create('type_materiels', function (Blueprint $table) {
@@ -227,7 +227,7 @@ class CreateAllTables extends Migration
             $table->timestamps();
 
         });
-        
+
         Schema::create('prix', function (Blueprint $table) {
             $table->id(); // Clé primaire auto-incrémentée
             $table->foreignId('id_gamme')->constrained('gammes')->onDelete('cascade'); // lien avec la table "gammes"
@@ -246,7 +246,7 @@ class CreateAllTables extends Migration
             $table->primary(['id_commande', 'id_lot']);
             $table->timestamps();
         });
-        
+
         // Table Mouvement_Produits_Commande
             Schema::create('mouvement_produits_commandes', function (Blueprint $table) {
                 $table->foreignId('id_mouvement_produit')->constrained('mouvement_produits')->onDelete('cascade');
@@ -256,7 +256,7 @@ class CreateAllTables extends Migration
                 $table->primary(['id_mouvement_produit', 'id_commande']);
                 $table->timestamps();
             });
-        
+
 
         // Table Vente
         Schema::create('ventes', function (Blueprint $table) {
@@ -267,7 +267,7 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        //hitorique commande 
+        //hitorique commande
         Schema::create('historique_commandes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_commande')->constrained('commandes')->onDelete('cascade');
@@ -283,7 +283,7 @@ class CreateAllTables extends Migration
             $table->primary(['id_gamme', 'id_matiere']);
             $table->timestamps();
         });
-       
+
     }
 
     public function down()
