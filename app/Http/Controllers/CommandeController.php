@@ -156,7 +156,6 @@ class CommandeController extends Controller
                 'id_client' => 1, // À adapter
                 'date_commande' => Carbon::today(),
                 'date_livraison' => $commandeData['date_livraison'],
-                'id_statut_commande' => 1,
                 'total' => 0,
             ]);
 
