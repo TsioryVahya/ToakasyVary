@@ -193,33 +193,44 @@
 
             <div class="bg-[#2d2d2d] rounded-lg shadow p-6">
                 <h3 class="text-lg font-bold mb-4">Commande des clients ce mois-ci</h3>
+                <?php
+                   $commandes = DB::select("
+                            SELECT v1.*
+                            FROM vue_details_commandes v1
+                            INNER JOIN (
+                                SELECT idCommande, MAX(idhistorique) as max_hist
+                                FROM vue_details_commandes
+                                GROUP BY idCommande
+                            ) v2 ON v1.idCommande = v2.idCommande AND v1.idhistorique = v2.max_hist
+                            WHERE v1.idstatus = 1
+                            GROUP BY v1.id_client, v1.nom, v1.date_commande, v1.date_livraison, v1.idstatus
+                        ");
+                ?>
+                
                 <div class="space-y-4">
+                    <?php
+                        $i=1;
+                        foreach ($commandes as $commande)
+                        {
+                    ?>
                     <div class="flex items-center justify-between p-3 bg-[#2d2d2d] rounded-lg">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white mr-3">SU</div>
+                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white mr-3"><?=$i ?></div>
                             <div>
-                                <p class="font-medium text-white">Super U</p>
-                                <p class="text-sm text-gray-400">Vendu: 200 bouteilles</p>
+                                <p class="font-medium text-white"><?php echo $commande->nom; ?></p>
+                                <p class="text-sm text-gray-400"><?php echo $commande->quantite_bouteilles; ?></p>
+
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="font-medium text-white">4.000.000 AR</p>
+                            <p class="font-medium text-white"><?php echo $commande->montant_paye; ?></p>
                         </div>
                     </div>
-
-
-                    <div class="flex items-center justify-between p-3 bg-[#2d2d2d] rounded-lg">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-yellow-600 flex items-center justify-center text-white mr-3">C</div>
-                            <div>
-                                <p class="font-medium">Carrefour</p>
-                                <p class="text-sm text-gray-400">Vendu: 150 bouteilles</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-medium">3.500.000 AR</p>
-                        </div>
-                    </div>
+                    <?php
+                        $i++;
+                        }
+                    ?>
+                    
                 </div>
             </div>
         </div>
@@ -235,6 +246,31 @@
 
             <div class="bg-[#2a2a2a] rounded-lg shadow p-6">
                 <h3 class="text-lg font-bold mb-4">Employes</h3>
+                <?php
+                    $employes = DB::table('employes')
+                        ->select('id', 'nom', 'poste', 'email')
+                        ->get();
+                    
+                    if ($employes->isEmpty()) {
+                        echo '<p class="text-gray-400">Aucun employé trouvé.</p>';
+                    } else {
+                        echo '<ul class="space-y-2">';
+                        foreach ($employes as $employe) {
+                            echo '<li class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">';
+                            echo '<div class="flex items-center">';
+                            echo '<span class="font-medium">' . $employe->nom . ' '. $employe->email . '</span>';
+                            echo '<span class="text-sm text-gray-400 ml-2">' . $employe->poste . '</span>';
+                            echo '</div>';
+                            echo '<button class="text-blue-400 hover:text-blue-200">';
+                            echo '<i class="fas fa-chevron-right"></i>';
+                            echo '</button>';
+                            echo '</li>';
+                        }
+                        echo '</ul>';
+                    }
+            
+
+                ?>
                 <!--                <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg mb-3">-->
                 <!--                    <div class="flex items-center">-->
                 <!--                        <i class="fas fa-laptop mr-3 text-blue-400"></i>-->
