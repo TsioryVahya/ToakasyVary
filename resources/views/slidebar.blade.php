@@ -1,7 +1,7 @@
 <div class="w-64 sidebar-custom text-white p-5 flex flex-col">
-    <img src="img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
+    <img src="../img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
     <nav class="flex-1">
-        <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 bg-gray-800 hover:bg-opacity-20 hover:bg-white transition">
+        <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i>
             Dashboard
         </a>
@@ -22,7 +22,6 @@
         <a href="{{ route('commandes.preview') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
             Prevision de commandes
-            
         </a>
         <a href="{{ route('commandes') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
             <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>
@@ -40,8 +39,6 @@
             <i class="fas fa-history mr-3 w-5 text-center"></i>
             Historique Vente
         </a>
-
-
     </nav>
     <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
         <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i>

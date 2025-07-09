@@ -82,39 +82,174 @@
             color: #cdb587;
         }
     </style>
+    <style>
+        body {
+            background-color: #0c0c0c;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+        .sidebar-custom {
+            width: 16rem;
+            background-color: #1b1b1b;
+            flex-shrink: 0;
+        }
+        .main-content {
+            background-color: #1b1b1b;
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow: auto;
+        }
+        .gold-text {
+            color: #cdb587;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 0.375rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #cdb587;
+            box-shadow: 0 0 0 2px rgba(205, 181, 135, 0.2);
+        }
+        .input-field::placeholder {
+            color: #6b7280;
+            opacity: 1;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn-primary {
+            background-color: #cdb587;
+            color: #1b1b1b;
+        }
+        .btn-primary:hover {
+            background-color: #d9c9a3;
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            background-color: #c3b083;
+        }
+        .btn-secondary {
+            background-color: #3d3d3d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4d4d4d;
+            transform: translateY(-1px);
+        }
+        .btn-secondary:active {
+            background-color: #2d2d2d;
+        }
+        .btn-success {
+            background-color: #34d399;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #10b981;
+        }
+        .btn-danger {
+            background-color: #f87171;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #ef4444;
+        }
+        .btn-warning {
+            background-color: #fbbf24;
+            color: #1b1b1b;
+        }
+        .btn-warning:hover {
+            background-color: #f59e42;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        .filter-section {
+            background-color: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .statut-en-attente {
+            color: #fbbf24;
+        }
+        .statut-valide {
+            color: #34d399;
+        }
+        .statut-annule {
+            color: #f87171;
+        }
+        .table-dark {
+            background-color: #232323;
+            color: #cdb587;
+        }
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #232323;
+        }
+        .table-striped tbody tr:nth-child(even) {
+            background-color: #1b1b1b;
+        }
+        .alert-success {
+            background-color: #34d399;
+            color: #1b1b1b;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .form-control, .form-select {
+            background-color: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            color: white;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #2d2d2d;
+            color: white;
+            border-color: #cdb587;
+            box-shadow: 0 0 0 0.25rem rgba(205, 181, 135, 0.25);
+        }
+        .ligne {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .ligne > * {
+            flex: 1;
+        }
+        .ligne > button {
+            flex: 0 0 auto;
+        }
+        .text-danger {
+            color: #f87171;
+        }
+    </style>
 </head>
 <body class="min-h-screen flex">
 
-<!-- Sidebar -->
-<div class="sidebar text-white p-5 flex flex-col">
-    <img src="../img/logo_rhum_rice.png" alt="logo" class="w-48 mx-auto mb-8">
-    <nav class="flex-1">
-        <a href="/home" class="flex items-center py-2 px-3 rounded mb-2 bg-gray-800 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i> Dashboard
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-industry mr-3 w-5 text-center"></i> Production
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-boxes mr-3 w-5 text-center"></i> Stocks
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Statistiques
-        </a>
-        <a href="#" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-calendar mr-3 w-5 text-center"></i> Calendrier
-        </a>
-        <a href="/statForm" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Statistiques des ventes
-        </a>
-        <a href="{{ route('historique_vente') }}" class="flex items-center py-2 px-3 rounded mb-2 hover:bg-opacity-20 hover:bg-white transition">
-            <i class="fas fa-chart-bar mr-3 w-5 text-center"></i> Historique Vente
-        </a>
-    </nav>
-    <a href="/login" class="flex items-center py-2 px-3 rounded hover:bg-opacity-20 hover:bg-white transition mt-auto">
-        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i> Déconnexion
-    </a>
-</div>
+@include('slidebar')
 
 <!-- Main Content -->
 <main class="flex-grow p-6 overflow-auto">

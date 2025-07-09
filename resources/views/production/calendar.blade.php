@@ -52,7 +52,7 @@
 <body class="bg-[#0c0c0c] text-white font-sans antialiased min-h-screen flex">
 
 <!-- Sidebar -->
-@include('real_sidebar')
+@include('slidebar')
 
 <!-- Main -->
 <main class="flex-grow p-6">
