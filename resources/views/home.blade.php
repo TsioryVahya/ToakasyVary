@@ -207,24 +207,61 @@
                 </div>
                 <div class="chart-placeholder h-64 rounded-lg flex items-end px-4">
                     <div class="flex-1 flex items-end space-x-1 w-full">
-                        <div class="custom-curve w-full h-8"></div>
-                        <div class="custom-curve w-full h-16"></div>
-                        <div class="custom-curve w-full h-24"></div>
-                        <div class="custom-curve w-full h-32"></div>
-                        <div class="custom-curve w-full h-20"></div>
-                        <div class="custom-curve w-full h-28"></div>
-                        <div class="custom-curve w-full h-36"></div>
-                        <div class="custom-curve w-full h-24"></div>
-                        <div class="custom-curve w-full h-16"></div>
+                    <?php
+                        $valeur=[];
+                        for ($i = 0; $i < 12 ; $i++) 
+                        {
+                            $stat_vente=DB::select("
+                                SELECT SUM(montant) AS montant
+                                FROM ventes
+                                WHERE year(date_vente) = year(NOW())
+                                AND month(date_vente) = $i + 1
+                            ");
+                            if (empty($stat_vente)) {
+                                $valeur[$i] = 0; // Si pas de vente, valeur est 0
+                            } else {
+                                // On divise par 1 million pour l'affichage
+                                $valeur[$i] = $stat_vente[0]->montant / 1000000;
+                            }
+                        }
+                        for ($i = 0; $i < 12; $i++) 
+                        {
+                            
+                    ?>
+                            <div class="custom-curve w-10 h-<?=$valeur[$i] ?>"></div>
+
+                    <?php
+                        }
+                    ?>
+
+
                     </div>
                 </div>
                 <div class="flex justify-between mt-4 text-sm text-gray-400">
-                    <span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                    <?php
+                        $mois=[];
+                        $mois[1] = 'Jan';
+                        $mois[2] = 'Fév';
+                        $mois[3] = 'Mar';
+                        $mois[4] = 'Avr';
+                        $mois[5] = 'Mai';
+                        $mois[6] = 'Jun';
+                        $mois[7] = 'Jul';
+                        $mois[8] = 'Aoû';
+                        $mois[9] = 'Sep';
+                        $mois[10] = 'Oct';
+                        $mois[11] = 'Nov';
+                        $mois[12] = 'Déc';
+
+                        foreach ($mois as $m) {
+                            echo "<span class='text-gray-400'>$m</span>";
+                        }
+                    ?>
                 </div>
             </div>
 
             <div class="bg-[#2d2d2d] rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4">Commande des clients ce mois-ci</h3>
+                <h3 class="text-lg font-bold mb-4">Commande des clients en cours</h3>
                 <?php
                    $commandes = DB::select("
                             SELECT v1.*
