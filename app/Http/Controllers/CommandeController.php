@@ -82,7 +82,7 @@ $montant = $commandeData->montant_total; // Correction de la variable ici
 
             DB::table('historique_commandes')->insert([
                 'id_commande' => $idCommande,
-                'id_statut_commande' => 2,
+                'id_status_commande' => 2,
                 'date_hist'=>$date
             ]);
 
@@ -162,7 +162,7 @@ public function annuler(Request $request)
     // Insertion dans l'historique si les conditions sont remplies
     DB::table('historique_commandes')->insert([
         'id_commande' => $idCommande,
-        'id_statut_commande' => 3, // Statut "Annulée"
+        'id_status_commande' => 3, // Statut "Annulée"
         'date_hist' => $now,
     ]);
 
