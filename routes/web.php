@@ -77,6 +77,7 @@ Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionCon
 Route::get('/commande', [CommandeController::class, 'commandes'])->name('commandes');
 Route::get('/commande/annulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
 Route::get('/commande/valider', [CommandeController::class, 'valider'])->name('commandes.valider');
+Route::post('/exporter', [HistoriqueVenteController::class, 'exporter'])->name('exporter');
 
 /*
 // Routes d'authentification de Breeze
