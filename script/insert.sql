@@ -60,9 +60,9 @@ INSERT INTO commandes (id_client, date_commande, date_livraison) VALUES
   (2, '2025-07-05', '2025-07-08');
 
 -- Historique des statuts de commande
-INSERT INTO historique_commandes (id_commande, id_status_commande) VALUES
-  (1, 1),
-  (2, 2);
+INSERT INTO historique_commandes (id_commande, id_statut_commande,date_hist) VALUES
+  (1, 1 , '2025-07-07'),
+  (2, 2 , '2025-07-08');
 
 
 -- Détail des commandes (Ligne_Commandes)

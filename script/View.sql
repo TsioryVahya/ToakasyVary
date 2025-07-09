@@ -73,7 +73,7 @@ SELECT
 FROM Lot_Production lp
 JOIN Gamme g ON lp.id_gamme = g.id;
 
-CREATE VIEW vue_details_commandes AS
+CREATE OR REPLACE VIEW vue_details_commandes AS
 SELECT
     c.id as idCommande,
     c.date_commande,
@@ -86,7 +86,7 @@ SELECT
     g.nom AS nom_gamme,
     tb.nom AS nom_bouteille,
     tb.capacite AS capacite_bouteille,
-    
+    g.id as idGamme,
     lc.quantite_bouteilles,
 
     p.montant AS montant_paye,
