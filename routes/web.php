@@ -75,7 +75,7 @@ Route::get('/production/lot_productions/{lotProduction}/data', [LotProductionCon
     ->name('lot_productions.data')
     ->middleware('auth');
 Route::get('/commande', [CommandeController::class, 'commandes'])->name('commandes');
-Route::get('/commande/anulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
+Route::get('/commande/annulation', [CommandeController::class, 'annuler'])->name('commandes.annulation');
 Route::get('/commande/valider', [CommandeController::class, 'valider'])->name('commandes.valider');
 
 /*

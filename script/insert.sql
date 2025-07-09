@@ -22,8 +22,8 @@ VALUES
 
 -- Clients
 INSERT INTO Clients (id, nom) VALUES
-  (3, 'rabe'),
-  (4, 'mamela');
+  (1, 'rabe'),
+  (2, 'mamela');
 
 -- Gammes de produits
 INSERT INTO Gammes (id, nom) VALUES
@@ -31,7 +31,7 @@ INSERT INTO Gammes (id, nom) VALUES
   (2, 'Jus Litchi');
 
 -- Statuts de commande
-INSERT INTO Statut_Commandes (nom) VALUES
+INSERT INTO statut_commandes (nom) VALUES
   ('ouvert'),
   ('valider'),
   ('annuler');
@@ -45,7 +45,7 @@ INSERT INTO prix (id_gamme, prix_unitaire, date_debut, date_fin) VALUES
     (2, 'Grande', 1.0);
 
 -- Lots de production
-INSERT INTO Lot_Productions (
+INSERT INTO lot_Productions (
   id_gamme, id_bouteille, date_debut, date_mise_en_bouteille, date_commercialisation, nombre_bouteilles
 ) VALUES
   (1, 1, '2025-07-01', '2025-07-02', '2025-07-04', 500),
@@ -55,14 +55,14 @@ INSERT INTO Lot_Productions (
 
 -- Commandes
 -- On suppose que les statuts 'ouvert', 'valider', 'annuler' ont les IDs 1, 2, 3
-INSERT INTO Commandes (id_client, date_commande, date_livraison) VALUES
-  (1, '2025-07-05', '2025-07-07'),
-  (2, '2025-07-05', '2025-07-08');
+INSERT INTO commandes (id,id_client, date_commande, date_livraison) VALUES
+  (1,1, '2025-07-05', '2025-07-07'),
+  (2,2, '2025-07-05', '2025-07-08');
 
 -- Historique des statuts de commande
-INSERT INTO historique_commandes (id_commande, id_statut_commande,date_hist) VALUES
+INSERT INTO historique_commandes (id_commande, id_status_commande,date_hist) VALUES
   (1, 1 , '2025-07-07'),
-  (2, 2 , '2025-07-08');
+  (2, 1 , '2025-07-08');
 
 
 -- Détail des commandes (Ligne_Commandes)
