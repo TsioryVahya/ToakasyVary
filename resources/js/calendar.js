@@ -63,6 +63,17 @@ function createDayCell(day, month, year) {
 
     // Format YYYY-MM-DD pour correspondre à l'API
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dateKey = `${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+    // Vérifie si c'est un jour férié
+    let isFerie = false;
+    let ferieNom = '';
+    let ferieCouleur = '';
+    if (joursFeries[year] && joursFeries[year][dateKey]) {
+        isFerie = true;
+        ferieNom = joursFeries[year][dateKey].nom;
+        ferieCouleur = joursFeries[year][dateKey].couleur;
+    }
 
     // Récupère les événements pour ce jour
     const dayEvents = vieillissementEvents
@@ -72,14 +83,19 @@ function createDayCell(day, month, year) {
     // Contenu de base
     let content = `<div class="font-semibold text-white mb-1">${day}</div>`;
 
+    // Affichage jour férié
+    if (isFerie) {
+        content += `<div class="mt-2 text-xs font-bold ${ferieCouleur} px-2 py-1 rounded">${ferieNom}</div>`;
+        cell.className += ` ${ferieCouleur}`;
+    }
+
+    // Affichage des événements de production
     if (dayEvents.length > 0) {
         content += '<div class="mt-1 space-y-1">';
-
         dayEvents.forEach(event => {
             let displayText = event.nom.split(' - ')[0];
             let iconSymbol = '';
 
-            // Définir les icônes selon le type d'événement
             if (event.is_start_event) {
                 iconSymbol = '▶';
             } else if (event.is_end_event) {
@@ -94,15 +110,16 @@ function createDayCell(day, month, year) {
                 </div>
             `;
         });
-
         content += '</div>';
     }
 
     cell.innerHTML = content;
 
-    // Ajouter un événement de clic pour plus de détails
+    // Détail au clic
     cell.addEventListener('click', () => {
-        if (dayEvents.length > 0) {
+        if (isFerie) {
+            alert(`Jour férié : ${ferieNom}`);
+        } else if (dayEvents.length > 0) {
             showEventDetails(dayEvents, dateStr);
         }
     });
@@ -152,16 +169,139 @@ function nextMonth() {
     generateCalendar(currentMonth, currentYear);
 }
 
+// Jours fériés de Madagascar
+const joursFeries = {
+    2025: {
+        '01-01': { nom: 'Nouvel An', couleur: 'bg-red-500' },
+        '03-29': { nom: 'Insurrection de 1947', couleur: 'bg-purple-500' },
+        '04-20': { nom: 'Pâques', couleur: 'bg-green-500' },
+        '04-21': { nom: 'Lundi de Pâques', couleur: 'bg-green-400' },
+        '05-01': { nom: 'Fête du Travail', couleur: 'bg-yellow-500' },
+        '05-29': { nom: 'Ascension', couleur: 'bg-blue-500' },
+        '06-08': { nom: 'Pentecôte', couleur: 'bg-indigo-500' },
+        '06-09': { nom: 'Lundi de Pentecôte', couleur: 'bg-indigo-500' },
+        '06-26': { nom: 'Fête de l\'Indépendance', couleur: 'bg-orange-500' },
+        '08-15': { nom: 'Assomption', couleur: 'bg-pink-500' },
+        '11-01': { nom: 'Toussaint', couleur: 'bg-teal-500' },
+        '12-25': { nom: 'Noël', couleur: 'bg-red-600' },
+        '10-04': { nom: 'Test Événement', couleur: 'bg-blue-500' } 
+    }
+};
+
+// Fonction pour calculer la période de notification (3 mois avant pendant 1 semaine)
+function isNotificationPeriod(eventDate, currentDate) {
+    const threeMonthsBefore = new Date(eventDate);
+    threeMonthsBefore.setMonth(threeMonthsBefore.getMonth() - 3);
+    const notificationStart = new Date(threeMonthsBefore);
+    const notificationEnd = new Date(threeMonthsBefore);
+    notificationEnd.setDate(notificationEnd.getDate() + 7); // +7 jours pour une semaine
+    return currentDate >= notificationStart && currentDate <= notificationEnd;
+}
+
+function getCurrentNotifications() {
+    const today = new Date();
+    const notifications = [];
+
+    // Parcourir toutes les années disponibles
+    Object.keys(joursFeries).forEach(year => {
+        Object.keys(joursFeries[year]).forEach(dateKey => {
+            const [month, day] = dateKey.split('-').map(Number);
+            const eventDate = new Date(year, month - 1, day);
+
+            if (isNotificationPeriod(eventDate, today)) {
+                notifications.push({
+                    nom: joursFeries[year][dateKey].nom,
+                    date: eventDate,
+                    couleur: joursFeries[year][dateKey].couleur
+                });
+            }
+        });
+    });
+
+    // Ajout des notifications pour les événements de vieillissement (ex: 3 mois avant la fin)
+    vieillissementEvents.forEach(event => {
+        if (event.date) {
+            const eventDate = new Date(event.date);
+            if (isNotificationPeriod(eventDate, today)) {
+                notifications.push({
+                    nom: event.nom,
+                    date: eventDate,
+                    couleur: event.couleur || 'bg-blue-400'
+                });
+            }
+        }
+    });
+
+    return notifications;
+}
+
+function displayNotifications() {
+    const notifications = getCurrentNotifications();
+
+    let notificationContainer = document.getElementById('notification-container');
+    if (!notificationContainer) {
+        notificationContainer = document.createElement('div');
+        notificationContainer.id = 'notification-container';
+        notificationContainer.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 space-y-2 w-96';
+        document.body.appendChild(notificationContainer);
+    }
+
+    notificationContainer.innerHTML = '';
+
+    if (notifications.length > 0) {
+        notifications.forEach((notification, index) => {
+            // Calcul du nombre de jours restants
+            const today = new Date();
+            const diffTime = notification.date.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let timingMsg = "";
+
+            if (diffDays > 7) {
+                timingMsg = `Dans ${diffDays} jours`;
+            } else if (diffDays > 1) {
+                timingMsg = `Dans ${diffDays} jours (cette semaine)`;
+            } else if (diffDays === 1) {
+                timingMsg = "Demain";
+            } else if (diffDays === 0) {
+                timingMsg = "Aujourd'hui";
+            } else if (diffDays < 0) {
+                timingMsg = `Il y a ${Math.abs(diffDays)} jours`;
+            }
+
+            const notificationDiv = document.createElement('div');
+            notificationDiv.className = `bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg shadow-lg w-full mb-3`;
+            notificationDiv.innerHTML = `
+                <div class="flex items-center">
+                    <div class="w-4 h-4 ${notification.couleur} rounded-full mr-4"></div>
+                    <div class="flex-1">
+                        <p class="font-bold text-base">🔔 ${notification.nom}</p>
+                        <p class="text-sm">Le ${notification.date.toLocaleDateString('fr-FR')}</p>
+                        <p class="text-xs italic">${timingMsg}</p>
+                    </div>
+                    <button onclick="temporaryHideNotification(${index})" class="ml-4 text-yellow-500 hover:text-yellow-700 text-2xl font-bold">
+                        ×
+                    </button>
+                </div>
+            `;
+            notificationDiv.id = `notification-${index}`;
+            notificationContainer.appendChild(notificationDiv);
+        });
+    }
+}
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
     generateCalendar(currentMonth, currentYear);
+    displayNotifications();
 
     // Rafraîchissement automatique toutes les heures
     setInterval(async () => {
         await loadData();
         generateCalendar(currentMonth, currentYear);
     }, 3600000); // 1 heure
+
+    setInterval(displayNotifications, 1800000); // Rafraîchit les notifications toutes les 30 min
 });
 
 // Exposer les fonctions au scope global
