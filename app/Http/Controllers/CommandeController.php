@@ -330,12 +330,11 @@ class CommandeController extends Controller
                     'quantite_bouteilles' => -$quantite,
                     'date_mouvement'=> $date
                 ]);
-
-                DB::table('historique_commandes')->insert([
-                    'id_commande' => $idCommande,
-                    'id_statut_commande' => 2,
-                    'date_hist'=>$date
-                ]);
+            DB::table('historique_commandes')->insert([
+                'id_commande' => $idCommande,
+                'id_status_commande' => 2,
+                'date_hist'=>$date
+            ]);
 
                 DB::table('ventes')->insert([
                     'id_commande' => $idCommande,
@@ -414,7 +413,7 @@ public function annuler(Request $request)
         // Insertion dans l'historique si les conditions sont remplies
         DB::table('historique_commandes')->insert([
             'id_commande' => $idCommande,
-            'id_statut_commande' => 3, // Statut "Annulée"
+            'id_status_commande' => 3, // Statut "Annulée"
             'date_hist' => $now,
         ]);
 
@@ -484,4 +483,6 @@ public function annuler(Request $request)
 
         return "Sortie de stock réalisée avec succès pour la commande $idCommande.";
     }
+
+    
 }
