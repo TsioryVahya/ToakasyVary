@@ -59,10 +59,22 @@ Route::get('/clients/nombre', [ClientController::class, 'nombreClients'])->name(
 Route::get('/commandesPreview/preview', [CommandeController::class, 'previewForm'])->name('commandes.preview');
 Route::post('/commandesPreview/preview', [CommandeController::class, 'preview'])->name('commandes.preview');
 Route::post('/commandesPreview', [CommandeController::class, 'store'])->name('commandes.store');
-Route::get('/stockProduitsFinis/all', [StockProduitsFinisController::class, 'showAllStocks'])->name('stockProduitsFinis.all');
 Route::get('/commande/sortie-stock/{id}', [CommandeController::class, 'sortirStockSelonCommande']);
 Route::get('/stock/commande/{idCommande}', [StockProduitsFinisController::class, 'stockSelonCommande'])->name('stock.par_commande');
 
+// Route pour afficher les stocks avec filtre de date optionnel
+Route::get('/stocks/produits-finis', [StockProduitsFinisController::class, 'showAllStocks'])
+    ->name('stocks.produits-finis.all');
+
+// Route alternative avec paramètre de date explicite
+Route::get('/stocks/produits-finis/{date}', [StockProduitsFinisController::class, 'showAllStocks'])
+    ->name('stocks.produits-finis.date')
+    ->where('date', '\d{4}-\d{2}-\d{2}');
+
+// Route API pour obtenir les messages de stock faible pour une date
+Route::get('/api/stocks/low-stock-messages/{date?}', [StockProduitsFinisController::class, 'getLowStockMessages'])
+    ->name('api.stocks.low-stock-messages')
+    ->where('date', '\d{4}-\d{2}-\d{2}');
 
 // CRUD pour Matiere premiere
 Route::resource('matieres', MatierePremiereController::class)->except(['show']);

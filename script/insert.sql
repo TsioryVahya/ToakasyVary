@@ -21,12 +21,12 @@ VALUES
     -- ======= Ajout des données de référence =======
 
 -- Clients
-INSERT INTO Clients (id, nom) VALUES
-  (1, 'rabe'),
-  (2, 'mamela');
+INSERT INTO clients (id, nom) VALUES
+  (1, 'Andry Rabe'),
+  (2, 'Miora Ranaivo');
 
 -- Gammes de produits
-INSERT INTO Gammes (id, nom) VALUES
+INSERT INTO gammes (id, nom) VALUES
   (1, 'Jus Mangue'),
   (2, 'Jus Litchi');
 
@@ -67,9 +67,9 @@ INSERT INTO historique_commandes (id_commande, id_status_commande,date_hist) VAL
 
 -- Détail des commandes (Ligne_Commandes)
 -- Supposons que les IDs des prix soient 1 et 2
-INSERT INTO Ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix) VALUES
-  (1, 4, 2, 1),
-  (2, 3, 3, 2);
+INSERT INTO ligne_commandes (id_commande, id_lot, quantite_bouteilles, id_prix) VALUES
+  (1, 2, 2, 1),
+  (2, 1, 3, 2);
 INSERT INTO paiement_commandes (id_commande, montant, date_paiement) VALUES
   ( 1, 4500, '2025-07-05'),
   ( 2, 5400, '2025-07-06')

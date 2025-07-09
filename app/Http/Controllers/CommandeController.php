@@ -14,12 +14,11 @@ use App\Models\Client;
 use App\Models\LigneCommande;
 use App\Models\Commande;
 use App\Models\HistoriqueCommande;
+use App\Models\PaiementCommande;
 use Carbon\Carbon;
-
 
 class CommandeController extends Controller
 {
-
     public function previewForm()
     {
         $gammes = Gamme::all();
@@ -158,7 +157,6 @@ class CommandeController extends Controller
                 'id_client' => $commandeData['id_client'], // À adapter
                 'date_commande' => Carbon::today(),
                 'date_livraison' => $commandeData['date_livraison'],
-                'id_statut_commande' => 1,
                 'total' => 0,
             ]);
 
@@ -244,6 +242,13 @@ class CommandeController extends Controller
                 'date_hist' => Carbon::today(),
             ]);
 
+            $paiement = PaiementCommande::create([
+                'id_commande' => $commande->id,
+                'montant' => $commande->total,
+                'date_paiement' => Carbon::today(),
+            ]);
+            $paiement->save();
+
             Log::info('HistoriqueCommande created:', [
                 'id_commande' => $commande->id,
                 'id_status_commandes' => 1
@@ -251,7 +256,7 @@ class CommandeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('commandes.preview')->with('success', 'Commande enregistrée avec succès.');
+            return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saving commande:', ['message' => $e->getMessage()]);
@@ -336,36 +341,16 @@ class CommandeController extends Controller
                 'date_hist'=>$date
             ]);
 
-                DB::table('ventes')->insert([
-                    'id_commande' => $idCommande,
-                    'date_vente' => $date,
-                    'montant' =>$montant
-                ]);
+            DB::table('ventes')->insert([
+                'id_commande' => $idCommande,
+                'date_vente' => $date,
+                'montant' =>$montant
+            ]);
 
-            }
-            return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
-
+        }
+        return redirect()->route('commandes')->with('success', 'Commande enregistrée avec succès.');
    }
 
-//    public function annuler(Request $request){
-//         $request->validate([
-//             'idCommande' => 'required|nullable|integer|in:1,2,3', // Rend le filtre optionnel
-//         ]);
-//         $idCommande=$request->idCommande;
-//         $resultss = DB::select("
-//             Select date_livraison from vue_details_commandes where idCommande=?
-//         ", [$idCommande]);
-//         $date= $resultss[0]->date_livraison;
-//         $resultss = DB::select("
-//             Select id_gamme from vue_details_commandes where idCommande=?
-//         ", [$idCommande]);
-//         $date= $resultss[0]->date_livraison;
-//         if(){}
-//         DB::table('historique_commandes')->insert([
-//             'id_commandes' => $idCommande,
-//             'id_status_commandes' => 3
-//         ]);
-//     }
 public function annuler(Request $request)
     {
         $request->validate([
@@ -488,3 +473,4 @@ public function annuler(Request $request)
 
     
 }
+

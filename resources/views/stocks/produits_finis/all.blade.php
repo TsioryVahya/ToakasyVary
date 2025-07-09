@@ -80,6 +80,15 @@
 <main class="flex-grow p-6 overflow-auto">
     <div class="main-content rounded-lg shadow-lg p-6">
         <h1 class="text-3xl font-bold gold-text mb-6">Aperçu du Stock</h1>
+        <div class="date-filter">
+            <form method="GET" action="{{ url()->current() }}">
+                <label for="date">Filtrer par date:</label>
+                <input type="date" id="date" name="date" value="{{ $selectedDate }}">
+                <button type="submit">Filtrer</button>
+                <span class="current-date">Date actuelle: {{ $selectedDate }}</span>
+            </form>
+        </div>
+
 
         @if ($notification)
             <div class="notification flex items-start">
@@ -117,11 +126,16 @@
                         <td>{{ $stock->nombre_bouteilles }}</td>
                         <td>{{ $stock->reste_bouteilles }}</td>
                     </tr>
-                @empty
-                    <tr><td colspan="9" class="text-center py-4">Aucun lot trouvé</td></tr>
+                 @empty
+                    <tr><td colspan="9">Aucun lot trouvé pour la date {{ $selectedDate }}!</td></tr>
                 @endforelse
                 </tbody>
             </table>
+    <!-- Date Filter Section -->
+    
+    @if ($notification)
+        <div class="notification">
+            {!! $notification !!}
         </div>
 
         <div class="section-title">Reste bouteille par Gamme-Type Bouteille</div>
@@ -144,10 +158,10 @@
                         <td>{{ $stock->total_reste_bouteilles }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="text-center py-4">Pas de combinaison gamme-bouteille disponible</td></tr>
-                @endforelse
-                </tbody>
-            </table>
+                <tr><td colspan="4">Pas de combinaison gamme-bouteille disponible pour la date {{ $selectedDate }}</td></tr>
+            @endforelse
+        </tbody>
+    </table>
         </div>
 
         <div class="section-title">Reste bouteille par Gamme</div>
@@ -166,10 +180,10 @@
                         <td>{{ $stock->total_reste_bouteilles }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="2" class="text-center py-4">Pas de gamme disponible</td></tr>
-                @endforelse
-                </tbody>
-            </table>
+                <tr><td colspan="2">Pas de gamme disponible pour la date {{ $selectedDate }}</td></tr>
+            @endforelse
+        </tbody>
+    </table>
         </div>
 
         <div class="section-title">Reste bouteille par Type</div>
@@ -189,11 +203,11 @@
                         <td>{{ $stock->capacite_bouteille }} L</td>
                         <td>{{ $stock->total_reste_bouteilles }}</td>
                     </tr>
-                @empty
-                    <tr><td colspan="3" class="text-center py-4">Pas de type de bouteille disponible</td></tr>
+                 @empty
+                    <tr><td colspan="3">Pas de type de bouteille disponible pour la date {{ $selectedDate }}</td></tr>
                 @endforelse
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         </div>
     </div>
 </main>
