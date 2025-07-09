@@ -57,9 +57,9 @@ INSERT INTO matiere_premieres (nom, description) VALUES
 ('Levure', 'Levure active'),
 ('Eau', 'Eau pure');
 INSERT INTO prix_materiels (id_matiere_premiere, prix, created_at, updated_at) VALUES
-(1, 0.50, NOW(), NOW()),  -- Sucre à 0.50€/kg
-(2, 1.20, NOW(), NOW()),  -- Levure à 1.20€/kg
-(3, 0.05, NOW(), NOW());  -- Eau à 0.05€/litre
+(1, 0.50, NOW(), NOW()),  -- Sucre à 0.50Ar/kg
+(2, 1.20, NOW(), NOW()),  -- Levure à 1.20Ar/kg
+(3, 0.05, NOW(), NOW());  -- Eau à 0.05Ar/litre
 INSERT INTO gamme_matieres (id_gamme, id_matiere, quantite) VALUES
 (1, 1, 0.2),  -- Gamme Classique utilise 0.2 kg sucre par bouteille
 (1, 2, 0.01), -- 0.01 kg levure par bouteille

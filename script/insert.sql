@@ -27,8 +27,9 @@ INSERT INTO clients (id, nom) VALUES
 
 -- Gammes de produits
 INSERT INTO gammes (id, nom) VALUES
-  (1, 'Jus Mangue'),
-  (2, 'Jus Litchi');
+  (1, 'Haut de gamme'),
+  (2, 'Moyen de gamme'),
+  (3, 'Bas de gamme');
 
 -- Statuts de commande
 INSERT INTO statut_commandes (nom) VALUES

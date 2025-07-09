@@ -132,7 +132,7 @@
                         </div>
                         <div class="detail-item">
                             <strong class="block gold-text mb-1">Montant</strong>
-                            <span>{{ number_format($vente->montant, 2) }} €</span>
+                            <span>{{ number_format($vente->montant, 2) }} Ar</span>
                         </div>
                         <div class="detail-item">
                             <strong class="block gold-text mb-1">Quantité</strong>

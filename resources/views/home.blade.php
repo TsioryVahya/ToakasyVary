@@ -143,74 +143,62 @@
 
         <!-- Charts -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="bg-[#2a2a2a] rounded-lg shadow p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h3 class="text-lg font-bold">Vente cette année</h3>
-                        <p class="text-sm text-green-400">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                        </p>
-                    </div>
-                </div>
-                <div class="chart-placeholder h-64 rounded-lg flex items-end px-4">
-                    <div class="flex-1 flex items-end space-x-1 w-full">
-                    <?php
-                        $valeur=[];
-                        for ($i = 0; $i < 12 ; $i++) 
-                        {
-                            $stat_vente=DB::select("
-                                SELECT SUM(montant) AS montant
-                                FROM ventes
-                                WHERE year(date_vente) = year(NOW())
-                                AND month(date_vente) = $i + 1
-                            ");
-                            if (empty($stat_vente)) 
-                            {
-                                $valeur[] = 0; // Si pas de vente, valeur est 0
-                            }
-                            else 
-                            {
-                                $val=($stat_vente[0]->montant)/10000;
-                            
-                                // On divise par 1 million pour l'affichage
-                                $valeur[] =round($val); // Multiplier par 10 pour l'échelle de la courbe
-                            }
-                        }
-                        for ($i = 0; $i < 12; $i++) 
-                        {
-                            
-                    ?>
-                            <div class="custom-curve w-10 h-<?=$valeur[$i] ?>"></div>
-
-                    <?php
-                        }
-                    ?>
-
-
-                    </div>
-                </div>
-                <div class="flex justify-between mt-4 text-sm text-gray-400">
-                    <?php
-                        $mois=[];
-                        $mois[1] = 'Jan';
-                        $mois[2] = 'Fév';
-                        $mois[3] = 'Mar';
-                        $mois[4] = 'Avr';
-                        $mois[5] = 'Mai';
-                        $mois[6] = 'Jun';
-                        $mois[7] = 'Jul';
-                        $mois[8] = 'Aoû';
-                        $mois[9] = 'Sep';
-                        $mois[10] = 'Oct';
-                        $mois[11] = 'Nov';
-                        $mois[12] = 'Déc';
-
-                        foreach ($mois as $m) {
-                            echo "<span class='text-gray-400'>$m</span>";
-                        }
-                    ?>
-                </div>
+            <div class="flex flex-col w-full bg-[#2d2d2d] rounded-lg shadow p-6">
+    <h3 class="text-lg font-bold mb-4 text-white">Vente de cette année</h3>
+    <div class="flex-1 flex items-end space-x-2 w-full h-64 border-b border-gray-200">
+        <?php
+        $valeur = [];
+        $max_value = 0;
+        
+        // Récupérer les données et trouver la valeur max pour la mise à l'échelle
+        for ($i = 0; $i < 12; $i++) {
+            $stat_vente = DB::select("
+                SELECT SUM(montant) AS montant
+                FROM ventes
+                WHERE year(date_vente) = year(NOW())
+                AND month(date_vente) = $i + 1
+            ");
+            
+            $val = empty($stat_vente) ? 0 : round($stat_vente[0]->montant);
+            $valeur[] = $val;
+            
+            if ($val > $max_value) {
+                $max_value = $val;
+            }
+        }
+        
+        // Afficher les barres avec hauteur proportionnelle
+        foreach ($valeur as $val) {
+            // Calculer la hauteur proportionnelle (max 64 = h-64 en tailwind)
+            $height = $max_value > 0 ? round(($val / $max_value) * 64) : 0;
+            $height = max(1, $height); // Au moins 1px de hauteur pour être visible
+        ?>
+            <div class="relative flex flex-col items-center flex-1">
+                <div 
+                    class="w-full bg-blue-500 hover:bg-blue-600 transition-all rounded-t-sm" 
+                    style="height: <?= $height ?>px;"
+                    title="<?= number_format($val, 0, ',', ' ') ?>"
+                ></div>
             </div>
+        <?php } ?>
+    </div>
+
+    <div class="flex justify-between mt-2 text-sm text-gray-400">
+        <?php
+        $mois = [
+            1 => 'Jan', 2 => 'Fév', 3 => 'Mar', 
+            4 => 'Avr', 5 => 'Mai', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Aoû', 9 => 'Sep',
+            10 => 'Oct', 11 => 'Nov', 12 => 'Déc'
+        ];
+        
+        foreach ($mois as $m) {
+            echo "<span class='flex-1 text-center'>$m</span>";
+        }
+        ?>
+    </div>
+</div>
+            
 
             <div class="bg-[#2d2d2d] rounded-lg shadow p-6">
                 <h3 class="text-lg font-bold mb-4">Commande des clients en cours</h3>

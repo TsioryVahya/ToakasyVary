@@ -187,7 +187,7 @@
                     labels: dates.map(date => new Date(date).toLocaleDateString()),
                     datasets: [
                         {
-                            label: 'Haut de gamme - Litres',
+                            label: 'Bas de gamme - Litres',
                             data: litreData.gamme1,
                             backgroundColor: 'rgba(255, 99, 132, 0.7)',
                             borderColor: 'rgba(255, 99, 132, 1)',
@@ -201,7 +201,7 @@
                             borderWidth: 1
                         },
                         {
-                            label: 'standard - Litres',
+                            label: 'Haut de gamme - Litres',
                             data: litreData.gamme3,
                             backgroundColor: 'rgba(255, 206, 86, 0.7)',
                             borderColor: 'rgba(255, 206, 86, 1)',

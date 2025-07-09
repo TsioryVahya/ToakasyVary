@@ -58,13 +58,13 @@
                 @foreach($stats as $stat)
                     <tr class="hover:bg-[#3d3d3d] transition">
                         <td class="p-3 border border-[#3d3d3d]">{{ $stat->nom }}</td>
-                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->cout_matiere_unitaire, 2) }} €</td>
+                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->cout_matiere_unitaire, 2) }} Ar</td>
                         <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->total_bouteille, 0) }}</td>
-                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->total_montant, 2) }} €</td>
-                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->total_depense, 2) }} €</td>
+                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->total_montant, 2) }} Ar</td>
+                        <td class="p-3 border border-[#3d3d3d]">{{ number_format($stat->total_depense, 2) }} Ar</td>
                         <td class="p-3 border border-[#3d3d3d] font-semibold
                                 {{ $stat->total_marge >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                            {{ number_format($stat->total_marge, 2) }} €
+                            {{ number_format($stat->total_marge, 2) }} Ar
                         </td>
                     </tr>
                 @endforeach
@@ -76,16 +76,16 @@
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-[#2d2d2d] p-4 rounded-lg border border-[#3d3d3d]">
                 <h3 class="text-[#cdb587] font-bold mb-2">Revenue Total</h3>
-                <p class="text-xl">{{ number_format($stats->sum('total_montant'), 2) }} €</p>
+                <p class="text-xl">{{ number_format($stats->sum('total_montant'), 2) }} Ar</p>
             </div>
             <div class="bg-[#2d2d2d] p-4 rounded-lg border border-[#3d3d3d]">
                 <h3 class="text-[#cdb587] font-bold mb-2">Dépenses Totales</h3>
-                <p class="text-xl">{{ number_format($stats->sum('total_depense'), 2) }} €</p>
+                <p class="text-xl">{{ number_format($stats->sum('total_depense'), 2) }} Ar</p>
             </div>
             <div class="bg-[#2d2d2d] p-4 rounded-lg border border-[#3d3d3d]">
                 <h3 class="text-[#cdb587] font-bold mb-2">Marge Totale</h3>
                 <p class="text-xl {{ $stats->sum('total_marge') >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                    {{ number_format($stats->sum('total_marge'), 2) }} €
+                    {{ number_format($stats->sum('total_marge'), 2) }} Ar
                 </p>
             </div>
         </div>
