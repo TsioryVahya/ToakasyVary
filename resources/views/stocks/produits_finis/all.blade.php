@@ -136,7 +136,7 @@
                 <tbody>
                 @forelse ($stocksPerLot as $stock)
                     <tr class="{{ $stock->reste_bouteilles < $threshold && $stock->reste_bouteilles > 0 ? 'low-stock' : '' }}">
-                        <td>{{ $stock->id }}</td>
+                        <td>{{ $stock->id_lot }}</td>
                         <td>{{ $stock->nom_gamme }}</td>
                         <td>{{ $stock->nom_bouteille }}</td>
                         <td>{{ $stock->capacite_bouteille }} L</td>

@@ -103,7 +103,7 @@ class StockProduitsFinisController extends Controller
         // Remaining bottles per lot
         $stocksPerLot = DB::table('vue_reste_bouteilles_par_lot')
             ->select(
-                'vue_reste_bouteilles_par_lot.id',  // au lieu de 'id_lot'
+                'vue_reste_bouteilles_par_lot.id_lot',  // au lieu de 'id_lot'
                 'nom_bouteille',
                 'capacite_bouteille',
                 'gammes.nom as nom_gamme',
@@ -114,7 +114,7 @@ class StockProduitsFinisController extends Controller
                 'reste_bouteilles'
             )
             ->join('gammes', 'vue_reste_bouteilles_par_lot.id_gamme', '=', 'gammes.id')
-            ->orderBy('vue_reste_bouteilles_par_lot.id') // ici c'est correct, car id existe
+            ->orderBy('vue_reste_bouteilles_par_lot.id_lot') // ici c'est correct, car id existe
             ->get();
 
         // All possible gamme-bottle combinations with remaining bottles (0 if none)

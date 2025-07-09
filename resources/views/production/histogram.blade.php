@@ -127,9 +127,9 @@
                     <label for="id_gamme" class="block text-gray-300 mb-2">Gamme</label>
                     <select id="id_gamme" name="id_gamme" class="input-field">
                         <option value="">Toutes les gammes</option>
-                        <option value="1">Gamme 1</option>
-                        <option value="2">Gamme 2</option>
-                        <option value="3">Gamme 3</option>
+                        <option value="1">Haut de gamme</option>
+                        <option value="2">Moyen de gamme</option>
+                        <option value="3">standard</option>
                     </select>
                 </div>
 
@@ -164,7 +164,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initialiser les dates
         document.getElementById('date_debut').value = '2024-02-01';
-        document.getElementById('date_fin').value = '2025-07-15';
+        document.getElementById('date_fin').value = '2099-07-15';
 
         let productionChart = null;
 
@@ -182,21 +182,21 @@
                     labels: dates.map(date => new Date(date).toLocaleDateString()),
                     datasets: [
                         {
-                            label: 'Gamme 1 - Litres',
+                            label: 'Haut de gamme - Litres',
                             data: litreData.gamme1,
                             backgroundColor: 'rgba(255, 99, 132, 0.7)',
                             borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 1
                         },
                         {
-                            label: 'Gamme 2 - Litres',
+                            label: 'Moyen de gamme - Litres',
                             data: litreData.gamme2,
                             backgroundColor: 'rgba(54, 162, 235, 0.7)',
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 1
                         },
                         {
-                            label: 'Gamme 3 - Litres',
+                            label: 'standard - Litres',
                             data: litreData.gamme3,
                             backgroundColor: 'rgba(255, 206, 86, 0.7)',
                             borderColor: 'rgba(255, 206, 86, 1)',
