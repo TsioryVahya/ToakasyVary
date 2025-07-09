@@ -19,25 +19,25 @@ return new class extends Migration
                 c.date_commande,
                 c.date_livraison,
                 c.id_client,
-            
+
                 cl.nom,
-            
+
                 lc.id_lot,
                 g.nom AS nom_gamme,
                 tb.nom AS nom_bouteille,
                 tb.capacite AS capacite_bouteille,
                 g.id as idGamme,
                 lc.quantite_bouteilles,
-            
+
                 p.montant AS montant_paye,
                 p.date_paiement,
                 stc.id as idhistorique,
                 stc.id_status_commande as idstatus,
-            
+
                 pr.prix_unitaire as prixUnitaire,
                 (lc.quantite_bouteilles * pr.prix_unitaire) AS montant_ligne
-            FROM Commandes c
-            
+            FROM commandes c
+
             JOIN Ligne_Commandes lc ON c.id = lc.id_commande
             JOIN Lot_Productions lp ON lc.id_lot = lp.id
             JOIN Gammes g ON lp.id_gamme = g.id
@@ -46,7 +46,7 @@ return new class extends Migration
             Join historique_commandes stc on c.id =stc.id_commande
             Join prix pr on pr.id = lc.id_prix
             JOIN paiement_commandes p ON c.id = p.id_commande;
-  
+
         ");
     }
 

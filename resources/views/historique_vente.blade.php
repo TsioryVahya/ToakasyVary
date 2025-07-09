@@ -59,6 +59,9 @@
         .btn-secondary:hover {
             background-color: #4d4d4d;
         }
+        .boxed-import{
+            display: flex;
+        }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -138,6 +141,21 @@
                         <div class="detail-item">
                             <strong class="block gold-text mb-1">Livraison</strong>
                             <span>{{ \Carbon\Carbon::parse($vente->livraison)->format('d/m/Y') }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong class="block gold-text mb-1">Action</strong>
+                            <form action="{{ route('exporter') }}" method="post" target="_blank">
+                                @csrf
+                                <div class="boxed-import">
+                                    <input type="hidden" value="{{ json_encode($vente) }}" name="vente" class="vente-id">
+                                    <button class="btn-primary py-2 px-4 rounded font-bold flex items-center">
+                                        Importer <i class="fas fa-file-import ml-2"></i>
+                                    </button>
+                                    <button class="btn-primary py-2 px-4 rounded font-bold flex items-center">
+                                        Exporter <i class="fas fa-file-export ml-2"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
