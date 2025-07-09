@@ -89,8 +89,8 @@ class CommandeController extends Controller
                 $result['date_disponibilite'][$gamme->id . '-' . $ligne['id_bouteille']] = Carbon::today();
                 $result['date_livraison'][$gamme->id . '-' . $ligne['id_bouteille']] = $dateLivraison;
             } else {
-                if ($faisableDansDelais) $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Réalisable dans le délai';
-                else $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Réalisable hors délai';
+                if ($faisableDansDelais) $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Non réalisable';
+                else $result['faisabilite'][$gamme->id . '-' . $ligne['id_bouteille']] = 'Non réalisable';
 
                 $result['date_disponibilite'][$gamme->id . '-' . $ligne['id_bouteille']] = $datePossible;
                 $result['date_livraison'][$gamme->id . '-' . $ligne['id_bouteille']] = $dateLivraison;
