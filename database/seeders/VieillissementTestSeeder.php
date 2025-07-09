@@ -93,7 +93,7 @@ class VieillissementTestSeeder extends Seeder
                 'id' => 1,
                 'id_gamme' => 1,
                 'id_bouteille' => 1,
-                'date_debut' => Carbon::now()->subDays(3)->format('Y-m-d'),
+                'date_debut' => 2025-07-03,
                 'date_mise_en_bouteille' => null,
                 'date_commercialisation' => null,
                 'nombre_bouteilles' => floor(800 / 0.7), // 800L / 0.7L
