@@ -235,6 +235,7 @@ function getCurrentNotifications() {
     return notifications;
 }
 
+
 function displayNotifications() {
     const notifications = getCurrentNotifications();
 
@@ -288,6 +289,13 @@ function displayNotifications() {
         });
     }
 }
+function temporaryHideNotification(index) {
+    const notif = document.getElementById(`notification-${index}`);
+    if (notif) {
+        notif.remove();
+    }
+}
+
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
